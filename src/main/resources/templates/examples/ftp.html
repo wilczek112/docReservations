@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<link rel="stylesheet" th:href="@{/css/style.css}">
+<head>
+    <section class="naglowek">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <meta charset="UTF-8">
+        <div class="header">
+            <title>Serwery</title>
+            <h2 class="godzina">
+                <div id="clock"></div>
+            </h2>
+            <img th:src="@{/images/PhpMyAdmin_logo_v2.png}" class="logo">
+            <a th:href="@{/logout}" style="text-decoration:none" class="btn button2">wyloguj </a>
+            <a type="submit" style="text-decoration:none" th:href="@{/panel}" class="btn button3">Powrót</a>
+        </div>
+    </section>
+</head>
+<body onload="timeCount();">
+<script>
+    function timeCount() {
+        var today = new Date();
+
+        var hour = today.getHours();
+        if(hour<10)hour = "0"+hour;
+
+        var minute = today.getMinutes();
+        if(minute<10)minute = "0"+minute;
+
+        var second = today.getSeconds();
+        if(second<10)second = "0"+second;
+
+        document.getElementById("clock").innerHTML = hour+":"+minute+":"+second;
+
+        setTimeout("timeCount()", 1000);
+    }
+</script>
+
+<section class="srodek">
+    <div class="sspanelftp">
+        <h1>Dostępne pliki</h1>
+        <table class="styled-table styled-tableftp">
+            <thead>
+            <tr>
+                <th>Typ</th>
+                <th>Nazwa</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${files_database.isEmpty()}">
+                <td colspan="2"> Brak plików :( </td>
+            </tr>
+            <tr th:each="ftp_file_database : ${files_database}">
+                <td><span th:text="${ftp_file_database.file_type}"> typ </span></td>
+                <td><span th:text="${ftp_file_database.name}"> nazwa </span></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+</body>
+<section class="stopka">
+    <div class="dpanel">
+
+        <h1>@Lubie_placki_2023</h1>
+
+    </div>
+</section>
+</html>

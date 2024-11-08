@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" th:href="@{/css/style.css}">
+<link rel="stylesheet" th:href="@{/css/mobile.css}">
+<head>
+    <section class="naglowek">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"  charset="UTF-8">
+        <div class="header">
+            <title>routery</title>
+            <h2 class="godzina">
+                <div id="clock"></div>
+            </h2>
+            <img th:src="@{/images/PhpMyAdmin_logo_v2.png}" class="logo">
+            <a th:href="@{/logout}" style="text-decoration:none" class="btn button2">wyloguj </a>
+            <a type="submit" style="text-decoration:none" th:href="@{/panel}" class="btn button3">Panel zarządzania</a>
+
+        </div>
+    </section>
+</head>
+<body>
+<section class="srodek">
+
+        <div class="sspanel">
+            <h1>Dostępne routery</h1>
+            <table class="styled-table">
+                <thead>
+                <tr>
+                    <th> Nazwa </th>
+                    <th> Adres ip </th>
+                    <th> Login </th>
+                    <th> Hasło </th>
+                    <th> Status </th>
+                    <th> Edytuj </th>
+                    <th> Usuń </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${routers.isEmpty()}">
+                    <td colspan="2"> Brak routerów :( </td>
+                </tr>
+                <tr th:each="router : ${routers}">
+                    <td><span th:text="${router.name}"> nazwa </span></td>
+                    <td><span th:text="${router.ip_address}"> adres ip </span></td>
+                    <td><span th:text="${router.login}"> login </span></td>
+                    <td><span th:text="${router.password}"> hasło </span></td>
+                    <td><span th:if="${router.status}=='ON'" style="color: green"> ● </span>
+                        <span th:if="${router.status}=='OFF'" style="color: red"> ● </span>
+                        <span th:if="${router.status!='ON' and router.status!='OFF'}" style="color: yellow"> ● </span></td>
+                    <td th:if="${auth==true}"><a th:href="@{/admin/editRouter/{id}(id=${router.id})}" class="btn button5" style="text-decoration:none">Edytuj</a></td>
+                    <td th:if="${auth==true}"><a th:href="@{/admin/deleteRouter/{id}(id=${router.id})}" class="btn button5" style="text-decoration:none">Usuń</a></td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+
+</section>
+</body>
+<section class="stopka">
+    <div class="dpanel">
+
+        <h1>@Lubie_placki_2023</h1>
+
+    </div>
+</section>
+</html>

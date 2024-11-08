@@ -1,0 +1,178 @@
+@media only screen and (max-width: 426px) {
+    .pinner{
+        width: 91%;
+        overflow-x: auto;
+        height: 100%;
+    }
+}
+
+@media screen and (max-width:426px){
+    .srodek{
+        height: 73%;
+    }
+
+
+
+
+}
+
+@media screen and (max-width: 426px) and (min-width: 322px){
+    .prawypanelhome{
+        width: 79%;
+        height: 59%;
+        padding: 20px;
+        position: relative;
+        left: 5px;
+    }
+}
+
+
+@media screen and (max-width:321px){
+    .prawypanelhome{
+        width: 79%;
+        height: 59%;
+        padding: 20px;
+        position: relative;
+        left: 1px;
+    }
+}
+
+@media screen and (max-width: 426px){
+    .godzina{
+        position: absolute;
+        top: 3.8%;
+        font-size: 120%;
+        left: 5%;
+        color: var(--white);
+
+    }
+}
+
+@media screen and (max-width: 1024px) and (min-width: 427px) {
+    .logo{ width: 16%; }
+}
+
+
+@media screen and (max-width: 426px) {
+    .logo{ width: 26%; }
+}
+
+
+
+@media screen and (max-width: 321px){
+    .lewypanelhome{
+        width: 73%;
+        height: 115%;
+        padding: 20px;
+        position: relative;
+        left: 1px;
+
+    }
+}
+
+
+@media screen and (max-width: 426px) and (min-width: 322px){
+    .lewypanelhome{
+        width: 79%;
+        height: 76%;
+        padding: 20px;
+        position: relative;
+        left: -3px;
+    }
+}
+
+@media screen  and (max-width: 426px){
+    .form{
+        width: 60%;
+        position: relative;
+        top: 18px;
+        height: 22%;
+    }
+}
+
+
+@media screen and (max-width: 426px) {
+    .llpanel {
+        width: 14%;
+        height: 20%;
+        padding: 17px 37px 50px 37px;
+
+    }
+}
+
+@media screen and (max-width: 426px) {
+    .pppanel {
+        width: 25%;
+        height: 50%;
+        padding: 17px 37px 50px 37px;
+    }
+}
+
+@media screen and (max-width: 426px) {
+    .sspanel {
+        position: relative;
+        top: 169px;
+        width: 18.5%;
+        height: 50%;
+        padding: 11px 49px 30px 14px;
+
+    }
+}
+
+
+.rsrodek {
+    background-image: url(https://images2.alphacoders.com/105/1059227.jpg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: var(--black);
+    width: 107%;
+    height: 65%;
+    padding-top: 4%;
+    padding-bottom: 4%;
+}
+
+
+.aspanel {
+    background-color: #acacac;
+    text-align: center;
+    width: 37.5%;
+    height: 5%;
+    padding: 20px 50px 50px 50px;
+    margin: 0 auto;
+    box-shadow: 10px 10px 50px rgb(156 124 110);
+    border-radius: 12px;
+    opacity: 0.81;
+    font-family: Calibri;
+}
+
+
+@media screen and (max-width: 1025px) and (min-width: 770px ) {
+    .prawypanelhome {
+        width: 49%;
+    }
+
+}
+
+
+@media screen and (max-width: 769px) and (min-width: 427px ) {
+    .prawypanelhome {
+        width: 42%;
+        height: 77.5%;
+        padding: 32px;
+        position: relative;
+        left: 32px;
+
+
+
+    }
+}
+
+
+
+@media screen and (max-width: 769px) and (min-width: 427px ) {
+    .pinner {
+        width: 86%;
+        height: 108%;
+    }
+}

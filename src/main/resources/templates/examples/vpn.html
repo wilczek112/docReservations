@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<link rel="stylesheet" th:href="@{/css/style.css}">
+<head>
+    <section class="naglowek">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <meta charset="UTF-8">
+        <div class="header">
+            <title>Serwery</title>
+            <h2 class="godzina">
+                <div id="clock"></div>
+            </h2>
+            <img th:src="@{/images/PhpMyAdmin_logo_v2.png}" class="logo">
+            <a th:href="@{/logout}" style="text-decoration:none" class="btn button2">wyloguj </a>
+            <a type="submit" style="text-decoration:none" th:href="@{/panel}" class="btn button3">Panel zarządzania</a>
+        </div>
+    </section>
+</head>
+<body onload="timeCount();">
+<script>
+    function timeCount() {
+        var today = new Date();
+
+        var hour = today.getHours();
+        if(hour<10)hour = "0"+hour;
+
+        var minute = today.getMinutes();
+        if(minute<10)minute = "0"+minute;
+
+        var second = today.getSeconds();
+        if(second<10)second = "0"+second;
+
+        document.getElementById("clock").innerHTML = hour+":"+minute+":"+second;
+
+        setTimeout("timeCount()", 1000);
+    }
+</script>
+
+<section class="srodek">
+    <div class="sspanel">
+        <h1>Dostępne serwery</h1>
+        <table class="styled-table">
+            <thead>
+            <tr>
+                <th> Protokół </th>
+                <th> Adres ip </th>
+                <th> Login </th>
+                <th> Hasło </th>
+                <th> Klucz </th>
+                <th> Status </th>
+                <th> Edytuj </th>
+                <th> Usuń </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${vpn.isEmpty()}">
+                <td colspan="2"> Brak vpnów :( </td>
+            </tr>
+            <tr th:each="vpn : ${vpn}">
+                <td><span th:text="${vpn.vpn_protocole}"> protokół vpn </span></td>
+                <td><span th:text="${vpn.ip_address}"> adres ip </span></td>
+                <td><span th:text="${vpn.login}"> login </span></td>
+                <td><span th:text="${vpn.password}"> hasło </span></td>
+                <td><span th:text="${vpn.authkey}"> klucz autentykacyjny </span></td>
+                <td><span th:if="${vpn.status}=='ON'" style="color: green"> ● </span>
+                    <span th:if="${vpn.status}=='OFF'" style="color: red"> ● </span>
+                    <span th:if="${vpn.status!='ON' and vpn.status!='OFF'}" style="color: yellow"> ● </span></td>
+                <td th:if="${auth==true}"><a th:href="@{/admin/editVpn/{id}(id=${vpn.id})}" class="btn button5" style="text-decoration:none">Edytuj</a></td>
+                <td th:if="${auth==true}"><a th:href="@{/admin/deleteVpn/{id}(id=${vpn.id})}" class="btn button5" style="text-decoration:none">Usuń</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+</body>
+<section class="stopka">
+    <div class="dpanel">
+
+        <h1>@Lubie_placki_2023</h1>
+
+    </div>
+</section>
+</html>

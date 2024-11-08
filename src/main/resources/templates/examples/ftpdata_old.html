@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" th:href="@{/css/style.css}">
+<head>
+    <section class="naglowek">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"  charset="UTF-8">
+        <div class="header">
+            <title>routery</title>
+            <img th:src="@{/images/PhpMyAdmin_logo_v2.png}" class="logo">
+            <button class="btn button2">wyloguj</button>
+            <a type="submit" style="text-decoration:none" th:href="@{/panel}" class="btn button3">Panel zarządzania</a>
+            <title>zarządzanie bazą danych</title>
+            <h2 class="godzina">
+                <div id="clock"></div>
+            </h2>
+        </div>
+    </section>
+</head>
+<body onload="timeCount();">
+<script>
+    function timeCount() {
+        var today = new Date();
+
+        var hour = today.getHours();
+        if(hour<10)hour = "0"+hour;
+
+        var minute = today.getMinutes();
+        if(minute<10)minute = "0"+minute;
+
+        var second = today.getSeconds();
+        if(second<10)second = "0"+second;
+
+        document.getElementById("clock").innerHTML = hour+":"+minute+":"+second;
+
+        setTimeout("timeCount()", 1000);
+    }
+</script>
+<section class="srodek">
+    <section class="container">
+
+
+        <div class="llpanel">
+            <h1>Dane FTP</h1>
+            <table class="styled-table">
+                <thead>
+                <tr>
+                    <th> Adres ip </th>
+                    <th> Nazwa </th>
+                    <th> Login </th>
+                    <th> Hasło </th>
+                    <th> Status </th>
+                    <th> Edytuj </th>
+                    <th> Usuń </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${ftp_data.isEmpty()}">
+                    <td colspan="2"> Brak serwerów ftp :( </td>
+                </tr>
+                <tr th:each="ftp : ${ftp_data}">
+                    <td><span th:text="${ftp.ip_address}"> ip </span></td>
+                    <td><span th:text="${ftp.name}"> name </span></td>
+                    <td><span th:text="${ftp.port}"> port </span></td>
+                    <td><span th:text="${ftp.login}"> login </span></td>
+                    <td><span th:text="${ftp.password}"> password </span></td>
+                    <td><<span th:if="${ftp.status}=='ON'" style="color: green"> ● </span>
+                        <span th:if="${ftp.status}=='OFF'" style="color: red"> ● </span>
+                        <span th:if="${ftp.status!='ON' and ftp.status!='OFF'}" style="color: yellow"> ● </span></td>
+                    <td th:if="${auth==true}"><a th:href="@{/admin/editFtp_data/{id}(id=${ftp.id})}">Edytuj</a></td>
+                    <td th:if="${auth==true}"><a th:href="@{/admin/deleteFtp_data/{id}(id=${ftp.id})}">Usuń</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="sspanel">
+            <h2>
+                Panel wyboru
+            </h2>
+            <button class="btn">połącz z bazą danych</button>
+            <button class="btn" onclick="windows.location.href='https://localhost/phpmyadmin';">zaloguj do bazy danych</button>
+
+        </div>
+
+        <div class="pppanel">
+            <h1>Dostepne bazy danych</h1>
+        </div>
+    </section>
+</section>
+</body>
+<section class="stopka">
+    <div class="dpanel">
+
+        <h1>@Lubie_placki_2023</h1>
+
+    </div>
+</section>
+</html>
