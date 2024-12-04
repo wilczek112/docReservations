@@ -47,12 +47,15 @@
 <div class="container">
     <h2 th:text="${title}">Form</h2>
     <form th:action="${actionUrl}" th:object="${entity}" method="post">
+        <!-- Hidden input for 'id' -->
+        <input type="hidden" th:field="*{id}" />
+
         <div class="form-group" th:each="field : ${fields}">
-            <label th:for="${field}" th:text="${field}"></label>
-            <input type="text" th:id="${field}" th:name="${field}" th:value="*{${field}}" required>
+            <label th:for="*{__${field}__}" th:text="${field}"></label>
+            <input type="text" th:field="*{__${field}__}" required />
         </div>
         <button type="submit" class="button">Zapisz</button>
-        <button type="button" class="button" onclick="location.href='/'">Anuluj</button>
+        <button type="button" class="button" onclick="history.back();">Anuluj</button>
     </form>
 </div>
 </body>

@@ -55,54 +55,44 @@
         }
     </style>
 </head>
-<body onload="timeCount();">
+<body>
 <div class="register-container">
     <h2>Rejestracja</h2>
     <div th:if="${param.success}">
-        <div class="alert">Pomyślnie zarejestrowano!</div>
+        <div class="alert">Rejestracja zakończona sukcesem!</div>
     </div>
     <form th:action="@{/register/saveUser}" th:object="${user}" method="post">
+        <label>Login</label>
         <input type="text" placeholder="Login" th:field="*{login}" required />
-        <div class="alertt" th:if="${#fields.hasErrors('login')}" th:errors="*{login}"></div>
+        <div th:if="${#fields.hasErrors('login')}" th:errors="*{login}" class="alert"></div>
 
+        <label>Hasło</label>
         <input type="password" placeholder="Hasło" th:field="*{password}" required />
-        <div class="alertt" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+        <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="alert"></div>
 
+        <label>Potwierdź Hasło</label>
         <input type="password" placeholder="Potwierdź Hasło" th:field="*{confirmPassword}" required />
-        <div class="alertt" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></div>
+        <div th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}" class="alert"></div>
 
-        <input type="text" placeholder="Imię" th:field="*{imie}" required />
-        <div class="alertt" th:if="${#fields.hasErrors('imie')}" th:errors="*{imie}"></div>
+        <label>Imię</label>
+        <input type="text" placeholder="Imię" th:field="*{firstName}" required />
+        <div th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" class="alert"></div>
 
-        <input type="text" placeholder="Nazwisko" th:field="*{nazwisko}" required />
-        <div class="alertt" th:if="${#fields.hasErrors('nazwisko')}" th:errors="*{nazwisko}"></div>
+        <label>Nazwisko</label>
+        <input type="text" placeholder="Nazwisko" th:field="*{lastName}" required />
+        <div th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" class="alert"></div>
 
+        <label>Email</label>
         <input type="email" placeholder="Email" th:field="*{email}" required />
-        <div class="alertt" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+        <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="alert"></div>
 
-        <input type="tel" placeholder="Telefon" th:field="*{telefon}" required />
-        <div class="alertt" th:if="${#fields.hasErrors('telefon')}" th:errors="*{telefon}"></div>
+        <label>Telefon</label>
+        <input type="tel" placeholder="Telefon" th:field="*{phone}" required />
+        <div th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="alert"></div>
 
-        <div class="button-container">
-            <button type="submit" class="register-button">Zarejestruj się</button>
-            <button type="button" onclick="location.href='/'">Powrót do logowania</button>
-        </div>
+        <button type="submit" class="register-button">Zarejestruj</button>
+        <button type="button" onclick="location.href='/'">Powrót</button>
     </form>
-    <p id="current-time"></p>
 </div>
-<script>
-    function timeCount() {
-        var today = new Date();
-        var hour = today.getHours();
-        if (hour < 10) hour = "0" + hour;
-        var minute = today.getMinutes();
-        if (minute < 10) minute = "0" + minute;
-        var second = today.getSeconds();
-        if (second < 10) second = "0" + second;
-        document.getElementById("current-time").innerHTML = hour + ":" + minute + ":" + second;
-        setTimeout("timeCount()", 1000);
-    }
-    timeCount();
-</script>
 </body>
 </html>

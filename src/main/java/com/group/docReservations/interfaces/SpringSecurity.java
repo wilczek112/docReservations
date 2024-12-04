@@ -46,12 +46,11 @@ public class SpringSecurity {
                         // Public endpoints
                         .requestMatchers("/register/**", "/saveUser", "/index", "/favicon.ico", "/css/**", "/images/**", "/error/**").permitAll()
 
-                        .requestMatchers("/api/pacjenci/**").hasAnyRole("USER", "ADMIN")
                         // Secure `/panel/**` to authenticated users with roles `USER` or `ADMIN`
-                        .requestMatchers("/panel/**", "/pacjenci/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/panel/**").hasAnyRole("USER", "ADMIN")
 
                         // Secure admin endpoints
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**", "/users/**").hasRole("ADMIN")
 
                         // Any other request requires authentication
                         .anyRequest().authenticated()
@@ -60,6 +59,7 @@ public class SpringSecurity {
                         .loginPage("/index")
                         .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/panel", true)
+                        .failureUrl("/index?error=true")
                         .permitAll())
                 .logout(logout -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))

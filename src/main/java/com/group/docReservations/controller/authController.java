@@ -4,7 +4,6 @@ import com.group.docReservations.classes.User;
 import com.group.docReservations.repository.UserRepository;
 import com.group.docReservations.services.UserService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -15,7 +14,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.List;
 
 @Controller
 public class authController {
@@ -31,22 +29,28 @@ public class authController {
     @GetMapping("/index")
     public String index() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        // Check if the user is authenticated
-        if (authentication != null && authentication.isAuthenticated() && !authentication.getPrincipal().equals("anonymousUser")) {
+        if (authentication != null && authentication.isAuthenticated() &&
+                !authentication.getPrincipal().equals("anonymousUser")) {
             return "redirect:/panel";
         }
-        return "index"; // Show the login page
+        return "index";
     }
 
-    @RequestMapping("/panel")
+    @GetMapping("/login")
+    public String login() {
+        return "redirect:/panel";
+    }
+
+    @GetMapping("/panel")
     public String panel(Model model) throws SocketException, UnknownHostException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
-        boolean hasAdminRole = authentication.getAuthorities().stream()
-                .anyMatch(r -> r.getAuthority().equals("ROLE_ADMIN"));
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
+
         User user = userService.findUserByEmail(currentPrincipalName);
         model.addAttribute("user", user);
-        model.addAttribute("auth", hasAdminRole);
+        model.addAttribute("isAdmin", isAdmin);
         return "panel";
     }
 
@@ -56,33 +60,26 @@ public class authController {
         return "register";
     }
 
-    @PostMapping("/register/saveUser")
-    public String saveUser(@Valid @ModelAttribute("user") User newUser, BindingResult errors, Model model) {
+    @PostMapping(value = "/register/saveUser")
+    public String saveUser(@Valid @ModelAttribute("user") User newUser, BindingResult errors, Model model) throws Exception {
         User testLogin = userRepository.findByLogin(newUser.getLogin());
         User testEmail = userRepository.findByEmail(newUser.getEmail());
-
-        if (testLogin != null) {
-            errors.rejectValue("login", null, "Istnieje użytkownik o tym samym loginie.");
+        if (testLogin != null && testLogin.getLogin() != null && !testLogin.getLogin().isEmpty()) {
+            errors.rejectValue("login", null, "A user with this login already exists.");
         }
-        if (testEmail != null) {
-            errors.rejectValue("email", null, "Istnieje użytkownik o tym samym emailu.");
+        if (testEmail != null && testEmail.getEmail() != null && !testEmail.getEmail().isEmpty()) {
+            errors.rejectValue("email", null, "A user with this email already exists.");
         }
         if (!newUser.getPassword().equals(newUser.getConfirmPassword())) {
-            errors.rejectValue("confirmPassword", null, "Hasła nie są zgodne.");
+            errors.rejectValue("confirmPassword", null, "Passwords do not match.");
         }
-
         if (errors.hasErrors()) {
             return "register";
-        }
-
-        newUser.setRole("ROLE_USER");
-        newUser.setPassword(new BCryptPasswordEncoder().encode(newUser.getPassword()));
-        try {
+        } else {
+            newUser.setRole("ROLE_USER");
             userService.saveUser(newUser);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            return "redirect:/register?success";
         }
-        return "redirect:/register?success";
     }
-}
 
+}

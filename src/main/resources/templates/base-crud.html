@@ -72,22 +72,22 @@
   <h2 th:text="${title}">CRUD Operations</h2>
   <table>
     <thead>
-    <tr th:each="header : ${headers}">
-      <th th:text="${header}"></th>
+    <tr>
+      <th th:each="header : ${headers}" th:text="${header}"></th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="entity : ${entities}">
-      <td th:each="field : ${fields}" th:text="${#fields.property(entity, field)}"></td>
+      <td th:each="field : ${fields}" th:text="${entity[field]}"></td>
       <td>
-        <a th:href="@{${editUrl}(id=${#fields.property(entity, 'id')})}">Edytuj</a> |
-        <a th:href="@{${deleteUrl}(id=${#fields.property(entity, 'id')})}"
+        <a th:href="@{${editUrl} + '/' + ${entity.id}}">Edytuj</a> |
+        <a th:href="@{${deleteUrl} + '/' + ${entity.id}}"
            onclick="return confirm('Czy na pewno chcesz usunąć?');">Usuń</a>
       </td>
     </tr>
     </tbody>
   </table>
-  <button class="button" th:onclick="'location.href=' + ${addUrl}">Dodaj</button>
+  <a class="button" th:href="${addUrl}">Dodaj</a>
   <button class="button" onclick="location.href='/panel'">Powrót do panelu</button>
 </div>
 </body>
