@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title th:text="${title}">CRUD Operations</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f4f4f4;
+    }
+    .container {
+      background-color: #fff;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      width: 80%;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    .button {
+      padding: 10px 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+     .alert {
+       padding: 10px;
+       margin-bottom: 20px;
+       border: 1px solid transparent;
+       border-radius: 4px;
+       width: 100%;
+       text-align: center;
+     }
+
+    .alert-success {
+      color: #155724;
+      background-color: #d4edda;
+      border-color: #c3e6cb;
+    }
+
+    .alert-error {
+      color: #721c24;
+      background-color: #f8d7da;
+      border-color: #f5c6cb;
+    }
+  </style>
+</head>
+<body>
+<div th:if="${message}" class="alert" th:classappend="${messageType == 'success' ? 'alert-success' : 'alert-error'}">
+  <span th:text="${message}"></span>
+</div>
+<div class="container">
+  <h2 th:text="${title}">CRUD Operations</h2>
+  <table>
+    <thead>
+    <tr th:each="header : ${headers}">
+      <th th:text="${header}"></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="entity : ${entities}">
+      <td th:each="field : ${fields}" th:text="${#fields.property(entity, field)}"></td>
+      <td>
+        <a th:href="@{${editUrl}(id=${#fields.property(entity, 'id')})}">Edytuj</a> |
+        <a th:href="@{${deleteUrl}(id=${#fields.property(entity, 'id')})}"
+           onclick="return confirm('Czy na pewno chcesz usunąć?');">Usuń</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <button class="button" th:onclick="'location.href=' + ${addUrl}">Dodaj</button>
+  <button class="button" onclick="location.href='/panel'">Powrót do panelu</button>
+</div>
+</body>
+</html>

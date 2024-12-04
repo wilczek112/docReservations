@@ -1,6 +1,7 @@
 package com.group.docReservations.services;
 
 import com.group.docReservations.classes.Pacjent;
+import com.group.docReservations.exception.ResourceNotFoundException;
 import com.group.docReservations.repository.PacjentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,17 +43,13 @@ public class PacjentServiceImpl implements PacjentService {
             existingPacjent.setEmail(updatedPacjent.getEmail());
             // Save updated pacjent
             return pacjentRepository.save(existingPacjent);
-        } else {
-            throw new ResourceNotFoundException("Pacjent not found with id " + id);
-        }
+        } else throw new ResourceNotFoundException("Pacjent not found with id " + id);
     }
 
     @Override
     public void deletePacjent(String id) {
         if (pacjentRepository.existsById(id)) {
             pacjentRepository.deleteById(id);
-        } else {
-            throw new ResourceNotFoundException("Pacjent not found with id " + id);
-        }
+        } else throw new ResourceNotFoundException("Pacjent not found with id " + id);
     }
 }

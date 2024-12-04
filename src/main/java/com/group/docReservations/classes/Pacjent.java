@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -16,7 +16,7 @@ public class Pacjent {
 
     private String imie;
     private String nazwisko;
-    private Date dataUrodzenia;
+    private LocalDate dataUrodzenia;
     private String telefon;
     private String email;
 }

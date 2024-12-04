@@ -3,7 +3,6 @@
 <head>
     <title>Brak Dostępu</title>
     <style>
-        /* Existing styles */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -49,7 +48,6 @@
             display: flex;
             justify-content: center;
         }
-        /* Additional styles for user info */
         .user-info {
             margin-bottom: 20px;
             font-size: 16px;
@@ -60,8 +58,8 @@
 <body>
 <div class="container">
     <h2>Brak Dostępu</h2>
-    <div class="user-info" th:if="${#authentication.principal != null}">
-        Użytkownik: <span th:text="${#authentication.name}"></span>
+    <div class="user-info" th:if="${#authentication?.principal != null}">
+        Użytkownik: <span th:text="${#authentication?.name}"></span>
     </div>
     <p>Nie masz uprawnień do wyświetlenia tej strony.</p>
     <div class="button-container">

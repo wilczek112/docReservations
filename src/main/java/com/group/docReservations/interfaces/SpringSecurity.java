@@ -1,11 +1,11 @@
-package com.group.docReservations.config;
+package com.group.docReservations.interfaces;
 
 import com.group.docReservations.services.CustomAccessDeniedHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,8 +18,11 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 public class SpringSecurity {
 
-    @Autowired
-    private UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
+
+    public SpringSecurity(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -43,30 +46,25 @@ public class SpringSecurity {
                         // Public endpoints
                         .requestMatchers("/register/**", "/saveUser", "/index", "/favicon.ico", "/css/**", "/images/**", "/error/**").permitAll()
 
+                        .requestMatchers("/api/pacjenci/**").hasAnyRole("USER", "ADMIN")
                         // Secure `/panel/**` to authenticated users with roles `USER` or `ADMIN`
-                        .requestMatchers("/panel/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/panel/**", "/pacjenci/**").hasAnyRole("USER", "ADMIN")
 
                         // Secure admin endpoints
                         .requestMatchers("/admin/**").hasRole("ADMIN")
 
-                        // Secure API endpoints for Pacjent CRUD operations
-                        .requestMatchers("/api/pacjents/**").hasRole("ADMIN")
-
                         // Any other request requires authentication
                         .anyRequest().authenticated()
                 )
-                .formLogin(
-                        form -> form
-                                .loginPage("/index") // Update if your login page is at /index
-                                .loginProcessingUrl("/login")
-                                .defaultSuccessUrl("/panel", true)
-                                .permitAll()
-                )
-                .logout(
-                        logout -> logout
-                                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                                .logoutSuccessUrl("/index")
-                                .permitAll()
+                .formLogin(form -> form
+                        .loginPage("/index")
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/panel", true)
+                        .permitAll())
+                .logout(logout -> logout
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                        .logoutSuccessUrl("/index")
+                        .permitAll()
                 )
                 .exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler());
@@ -74,15 +72,15 @@ public class SpringSecurity {
         return http.build();
     }
 
-    // Configure AuthenticationManagerBuilder
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(authenticationProvider());
-    }
-
     // Access Denied Handler
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
         return new CustomAccessDeniedHandler();
+    }
+
+    // Configure AuthenticationManager using Spring's AuthenticationConfiguration
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 }

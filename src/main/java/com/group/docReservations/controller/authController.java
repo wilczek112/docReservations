@@ -19,76 +19,70 @@ import java.util.List;
 
 @Controller
 public class authController {
-    @Autowired
-    private UserRepository userRepository;
-    private UserService userService;
 
-    public authController(UserService userService) {
+    private final UserRepository userRepository;
+    private final UserService userService;
+
+    public authController(UserService userService, UserRepository userRepository) {
         this.userService = userService;
+        this.userRepository = userRepository;
     }
 
-    @GetMapping("index")
+    @GetMapping("/index")
     public String index() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication.isAuthenticated()) return "redirect:/panel";
-        return "index";
-    }
-
-    @GetMapping("/login")
-    public String login() {
-        return "redirect:/panel";
+        // Check if the user is authenticated
+        if (authentication != null && authentication.isAuthenticated() && !authentication.getPrincipal().equals("anonymousUser")) {
+            return "redirect:/panel";
+        }
+        return "index"; // Show the login page
     }
 
     @RequestMapping("/panel")
     public String panel(Model model) throws SocketException, UnknownHostException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
-        boolean hasUserRole = authentication.getAuthorities().stream()
+        boolean hasAdminRole = authentication.getAuthorities().stream()
                 .anyMatch(r -> r.getAuthority().equals("ROLE_ADMIN"));
-        User User = userService.findUserByEmail(currentPrincipalName);
-        model.addAttribute("user", User);
-        model.addAttribute("auth", hasUserRole);
+        User user = userService.findUserByEmail(currentPrincipalName);
+        model.addAttribute("user", user);
+        model.addAttribute("auth", hasAdminRole);
         return "panel";
     }
 
-    @GetMapping(path = "/register")
+    @GetMapping("/register")
     public String register(Model model) {
         model.addAttribute("user", new User());
         return "register";
     }
 
-
-
-    @PostMapping(value = "/register/saveUser")
-    public String saveUser(@Valid @ModelAttribute("user") User newUser, BindingResult errors, Model model) throws Exception {
+    @PostMapping("/register/saveUser")
+    public String saveUser(@Valid @ModelAttribute("user") User newUser, BindingResult errors, Model model) {
         User testLogin = userRepository.findByLogin(newUser.getLogin());
         User testEmail = userRepository.findByEmail(newUser.getEmail());
 
-        if (testLogin != null && testLogin.getLogin() != null && !testLogin.getLogin().isEmpty()) {
-            errors.rejectValue("login", null, "Istnieje Email o tym samym loginie");
+        if (testLogin != null) {
+            errors.rejectValue("login", null, "Istnieje użytkownik o tym samym loginie.");
         }
-        if (testEmail != null && testEmail.getEmail() != null && !testEmail.getEmail().isEmpty()) {
-            errors.rejectValue("email", null, "Istnieje konto o tym samym email");
+        if (testEmail != null) {
+            errors.rejectValue("email", null, "Istnieje użytkownik o tym samym emailu.");
         }
         if (!newUser.getPassword().equals(newUser.getConfirmPassword())) {
-            errors.rejectValue("confirmPassword", null, "Passwords do not match");
+            errors.rejectValue("confirmPassword", null, "Hasła nie są zgodne.");
         }
+
         if (errors.hasErrors()) {
             return "register";
-        } else {
-            newUser.setRole("ROLE_USER");
-            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
-            userService.saveUser(newUser);
-            return "redirect:/register?success";
         }
-    }
 
-
-    @GetMapping("/users")
-    public String listRegisteredUsers(Model model) {
-        List<User> users = userService.findAllUsers();
-        model.addAttribute("users", users);
-        return "users";
+        newUser.setRole("ROLE_USER");
+        newUser.setPassword(new BCryptPasswordEncoder().encode(newUser.getPassword()));
+        try {
+            userService.saveUser(newUser);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return "redirect:/register?success";
     }
 }
+
