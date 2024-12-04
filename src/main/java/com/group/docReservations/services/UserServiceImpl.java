@@ -1,6 +1,6 @@
 package com.group.docReservations.services;
 
-import com.group.docReservations.classes.userClass;
+import com.group.docReservations.classes.User;
 import com.group.docReservations.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,23 +14,23 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Override
-    public void saveUser(userClass user) throws Exception {
+    public void saveUser(User user) throws Exception {
         // Here you can add any business logic like password hashing before saving
         userRepository.save(user);
     }
 
     @Override
-    public userClass findUserByLogin(String login) {
+    public User findUserByLogin(String login) {
         return userRepository.findByLogin(login);
     }
 
     @Override
-    public userClass findUserByEmail(String email) {
+    public User findUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
     @Override
-    public List<userClass> findAllUsers() {
+    public List<User> findAllUsers() {
         return userRepository.findAll();
     }
 }

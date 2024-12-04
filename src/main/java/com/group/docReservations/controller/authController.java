@@ -1,6 +1,6 @@
 package com.group.docReservations.controller;
 
-import com.group.docReservations.classes.userClass;
+import com.group.docReservations.classes.User;
 import com.group.docReservations.repository.UserRepository;
 import com.group.docReservations.services.UserService;
 import jakarta.validation.Valid;
@@ -45,24 +45,24 @@ public class authController {
         String currentPrincipalName = authentication.getName();
         boolean hasUserRole = authentication.getAuthorities().stream()
                 .anyMatch(r -> r.getAuthority().equals("ROLE_ADMIN"));
-        userClass userClass = userService.findUserByEmail(currentPrincipalName);
-        model.addAttribute("user", userClass);
+        User User = userService.findUserByEmail(currentPrincipalName);
+        model.addAttribute("user", User);
         model.addAttribute("auth", hasUserRole);
         return "panel";
     }
 
     @GetMapping(path = "/register")
     public String register(Model model) {
-        model.addAttribute("user", new userClass());
+        model.addAttribute("user", new User());
         return "register";
     }
 
 
 
     @PostMapping(value = "/register/saveUser")
-    public String saveUser(@Valid @ModelAttribute("user") userClass newUser, BindingResult errors, Model model) throws Exception {
-        userClass testLogin = userRepository.findByLogin(newUser.getLogin());
-        userClass testEmail = userRepository.findByEmail(newUser.getEmail());
+    public String saveUser(@Valid @ModelAttribute("user") User newUser, BindingResult errors, Model model) throws Exception {
+        User testLogin = userRepository.findByLogin(newUser.getLogin());
+        User testEmail = userRepository.findByEmail(newUser.getEmail());
 
         if (testLogin != null && testLogin.getLogin() != null && !testLogin.getLogin().isEmpty()) {
             errors.rejectValue("login", null, "Istnieje Email o tym samym loginie");
@@ -87,7 +87,7 @@ public class authController {
 
     @GetMapping("/users")
     public String listRegisteredUsers(Model model) {
-        List<userClass> users = userService.findAllUsers();
+        List<User> users = userService.findAllUsers();
         model.addAttribute("users", users);
         return "users";
     }

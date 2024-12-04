@@ -37,6 +37,7 @@
 <div class="container">
     <h2>Witamy, <span th:text="${user.login}"></span>!</h2>
     <p>Aktualny czas: <span id="current-time"></span></p>
+    <button class="button" th:href="@{/pacjenci}" onclick="location.href='/pacjenci'">Lista Pacjentów</button>
     <button class="button" th:href="@{/logout}" onclick="location.href='/logout'">Wyloguj się</button>
 </div>
 <script>

@@ -1,11 +1,10 @@
 package com.group.docReservations.services;
 
-import com.group.docReservations.classes.userClass;
+import com.group.docReservations.classes.User;
 import com.group.docReservations.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -26,9 +25,9 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        userClass user = userRepository.findByLogin(login);
+        User user = userRepository.findByLogin(login);
         if (user != null) {
-            return new User(user.getEmail(), user.getPassword(), mapRolesToAuthorities(user.getRole()));
+            return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), mapRolesToAuthorities(user.getRole()));
         } else {
             throw new UsernameNotFoundException("Invalid username or password.");
         }

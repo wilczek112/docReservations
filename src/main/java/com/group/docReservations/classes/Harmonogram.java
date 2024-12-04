@@ -5,17 +5,18 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.sql.Time;
 import java.util.Date;
 
 @Getter
 @Setter
-@Document(collection = "wizyta")
-public class wizytaClass {
+@Document(collection = "harmonogram")
+public class Harmonogram {
     @Id
-    private String wizyta_id;
+    private String harmonogram_id;
 
-    private int pacjent_id;
     private int lekarz_id;
-    private Date data_wizyty;
-    private String status;
+    private Date data;
+    private Time godzina_od;
+    private Time godzina_do;
 }

@@ -1,7 +1,7 @@
 package com.group.docReservations.repository;
 
-import com.group.docReservations.classes.harmonogramClass;
+import com.group.docReservations.classes.Harmonogram;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface HarmonogramRepository extends MongoRepository<harmonogramClass, String> {
+public interface HarmonogramRepository extends MongoRepository<Harmonogram, String> {
 }

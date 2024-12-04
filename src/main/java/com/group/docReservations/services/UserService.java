@@ -1,11 +1,12 @@
 package com.group.docReservations.services;
 
-import com.group.docReservations.classes.userClass;
+import com.group.docReservations.classes.User;
+
 import java.util.List;
 
 public interface UserService {
-    void saveUser(userClass user) throws Exception;
-    userClass findUserByLogin(String login);
-    userClass findUserByEmail(String email);
-    List<userClass> findAllUsers();
+    void saveUser(User user) throws Exception;
+    User findUserByLogin(String login);
+    User findUserByEmail(String email);
+    List<User> findAllUsers();
 }

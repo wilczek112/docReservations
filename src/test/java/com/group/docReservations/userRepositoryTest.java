@@ -1,6 +1,6 @@
 package com.group.docReservations;
 
-import com.group.docReservations.classes.userClass;
+import com.group.docReservations.classes.User;
 import com.group.docReservations.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @Rollback(false)
-public class userClassRepositoryTest {
+public class userRepositoryTest {
     @Autowired
     private TestEntityManager entityManager;
 
@@ -24,16 +24,16 @@ public class userClassRepositoryTest {
     @Test
     public void testCreateUser() {
         //privileges.addUser(user);
-        userClass userClass = new userClass();
-        userClass.setLogin("user");
-        userClass.setPassword("user");
-        userClass.setEmail("null@test.pl");
+        User User = new User();
+        User.setLogin("user");
+        User.setPassword("user");
+        User.setEmail("null@test.pl");
 
-        userClass savedUserClass = repo.save(userClass);
+        User savedUser = repo.save(User);
 
-        userClass existUserClass = entityManager.find(userClass.class, savedUserClass.getId());
+        User existUser = entityManager.find(User.class, savedUser.getId());
 
-        assertThat(userClass.getEmail()).isEqualTo(existUserClass.getEmail());
+        assertThat(User.getEmail()).isEqualTo(existUser.getEmail());
 
     }
     // test methods go below
