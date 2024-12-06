@@ -1,5 +1,6 @@
 package com.group.docReservations.classes;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -35,7 +36,7 @@ public class User {
     @Pattern(regexp = "^\\+?[0-9. ()-]{7,25}$", message = "Invalid phone number.")
     private String phone;
 
-    private String role;
+    private String role = "ROLE_USER";
 
     private LocalDate birthDate;
 

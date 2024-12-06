@@ -6,24 +6,23 @@ import com.group.docReservations.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-import java.net.SocketException;
-import java.net.UnknownHostException;
 
 @Controller
 public class authController {
 
     private final UserRepository userRepository;
     private final UserService userService;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public authController(UserService userService, UserRepository userRepository) {
+    public authController(UserService userService, UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/index")
@@ -42,7 +41,7 @@ public class authController {
     }
 
     @GetMapping("/panel")
-    public String panel(Model model) throws SocketException, UnknownHostException {
+    public String panel(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
         boolean isAdmin = authentication.getAuthorities().stream()
@@ -64,10 +63,10 @@ public class authController {
     public String saveUser(@Valid @ModelAttribute("user") User newUser, BindingResult errors, Model model) throws Exception {
         User testLogin = userRepository.findByLogin(newUser.getLogin());
         User testEmail = userRepository.findByEmail(newUser.getEmail());
-        if (testLogin != null && testLogin.getLogin() != null && !testLogin.getLogin().isEmpty()) {
+        if (testLogin != null) {
             errors.rejectValue("login", null, "A user with this login already exists.");
         }
-        if (testEmail != null && testEmail.getEmail() != null && !testEmail.getEmail().isEmpty()) {
+        if (testEmail != null) {
             errors.rejectValue("email", null, "A user with this email already exists.");
         }
         if (!newUser.getPassword().equals(newUser.getConfirmPassword())) {
@@ -77,9 +76,10 @@ public class authController {
             return "register";
         } else {
             newUser.setRole("ROLE_USER");
+            // Encrypt the password before saving
+            newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
             userService.saveUser(newUser);
             return "redirect:/register?success";
         }
     }
-
 }

@@ -17,16 +17,15 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.passwordEncoder = new BCryptPasswordEncoder(); // Ensures consistent password encryption
+        this.passwordEncoder = passwordEncoder; // Injected encoder
     }
 
     @Override
     public User saveUser(User user) throws Exception {
-        // Perform any necessary preprocessing before saving
         if (user.getPassword() != null) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setPassword(passwordEncoder.encode(user.getPassword())); // Encrypt password before saving
         }
         return userRepository.save(user);
     }
@@ -48,32 +47,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(User updatedUser) {
-        // Retrieve the existing user
         User existingUser = userRepository.findById(updatedUser.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + updatedUser.getId()));
 
-        // Update user details (excluding fields like password unless explicitly provided)
-        if (updatedUser.getLogin() != null) {
-            existingUser.setLogin(updatedUser.getLogin());
-        }
-        if (updatedUser.getFirstName() != null) {
-            existingUser.setFirstName(updatedUser.getFirstName());
-        }
-        if (updatedUser.getLastName() != null) {
-            existingUser.setLastName(updatedUser.getLastName());
-        }
-        if (updatedUser.getEmail() != null) {
-            existingUser.setEmail(updatedUser.getEmail());
-        }
-        if (updatedUser.getPhone() != null) {
-            existingUser.setPhone(updatedUser.getPhone());
-        }
-        if (updatedUser.getPassword() != null) {
-            existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
-        }
-        if (updatedUser.getRole() != null) {
-            existingUser.setRole(updatedUser.getRole());
-        }
+        // Update only non-null fields
+        Optional.ofNullable(updatedUser.getLogin()).ifPresent(existingUser::setLogin);
+        Optional.ofNullable(updatedUser.getFirstName()).ifPresent(existingUser::setFirstName);
+        Optional.ofNullable(updatedUser.getLastName()).ifPresent(existingUser::setLastName);
+        Optional.ofNullable(updatedUser.getEmail()).ifPresent(existingUser::setEmail);
+        Optional.ofNullable(updatedUser.getPhone()).ifPresent(existingUser::setPhone);
+        Optional.ofNullable(updatedUser.getPassword()).ifPresent(password ->
+                existingUser.setPassword(passwordEncoder.encode(password))); // Encrypt new password
+        Optional.ofNullable(updatedUser.getRole()).ifPresent(existingUser::setRole);
 
         return userRepository.save(existingUser);
     }

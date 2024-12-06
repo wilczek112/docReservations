@@ -4,8 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -14,8 +16,18 @@ public class Wizyta {
     @Id
     private String id;
 
-    private int pacjent_id;
-    private int lekarz_id;
-    private Date data_wizyty;
+    private String user_id;
+    private String lekarz_id;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime start_time;
+
+    @DateTimeFormat(pattern = "HH:mm")
+    private LocalTime end_time;
+
     private String status;
+
+    public LocalDateTime getEndDateTime() {
+        return LocalDateTime.of(start_time.toLocalDate(), end_time);
+    }
 }

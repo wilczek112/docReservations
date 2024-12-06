@@ -28,10 +28,17 @@
             display: block;
             margin-bottom: 5px;
         }
-        input[type="text"], input[type="email"], input[type="date"] {
+        input[type="text"], input[type="email"], input[type="datetime-local"], input[type="time"], select {
             width: 100%;
             padding: 8px;
             box-sizing: border-box;
+        }
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .checkbox-group label {
+            margin-right: 10px;
         }
         .button {
             padding: 10px 15px;
@@ -47,13 +54,41 @@
 <div class="container">
     <h2 th:text="${title}">Form</h2>
     <form th:action="${actionUrl}" th:object="${entity}" method="post">
-        <!-- Hidden input for 'id' -->
+        <!-- Hidden ID field -->
         <input type="hidden" th:field="*{id}" />
 
+        <!-- Dynamic Form Fields -->
         <div class="form-group" th:each="field : ${fields}">
-            <label th:for="*{__${field}__}" th:text="${field}"></label>
-            <input type="text" th:field="*{__${field}__}" required />
+            <label th:for="*{__${field.name}__}" th:text="${field.label}"></label>
+
+            <div th:if="${field.type == 'text'}">
+                <input type="text" th:field="*{__${field.name}__}" th:placeholder="${field.placeholder}" required />
+            </div>
+
+            <div th:if="${field.type == 'dropdown'}">
+                <select th:field="*{__${field.name}__}">
+                    <option value="" disabled selected th:text="${field.placeholder}"></option>
+                    <option th:each="option : ${field.options}" th:value="${option.value}" th:text="${option.label}"></option>
+                </select>
+            </div>
+
+            <div th:if="${field.type == 'datetime-local'}">
+                <input type="datetime-local" th:field="*{__${field.name}__}" required />
+            </div>
+
+            <div th:if="${field.type == 'time'}">
+                <input type="time" th:field="*{__${field.name}__}" required />
+            </div>
+
+            <div th:if="${field.type == 'checkbox-group'}" class="checkbox-group">
+                <label th:each="option : ${field.options}">
+                    <input type="checkbox" th:value="${option.value}" th:field="*{__${field.name}__}" />
+                    <span th:text="${option.label}"></span>
+                </label>
+            </div>
         </div>
+
+        <!-- Buttons -->
         <button type="submit" class="button">Zapisz</button>
         <button type="button" class="button" onclick="history.back();">Anuluj</button>
     </form>

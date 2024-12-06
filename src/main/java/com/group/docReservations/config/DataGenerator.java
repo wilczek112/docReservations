@@ -6,17 +6,28 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.sql.Time;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
+import java.util.List;
+import java.util.Random;
 
 @Configuration
 public class DataGenerator {
 
     @Value("${db.generate.enabled:false}")
     private boolean seedEnabled;
+
+    private final BCryptPasswordEncoder passwordEncoder;
+
+    public DataGenerator(BCryptPasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Bean
     CommandLineRunner runner(
@@ -35,84 +46,114 @@ public class DataGenerator {
             System.out.println("Starting database seeding...");
 
             // Clear existing data
-            //userRepository.deleteAll();
             specjalizacjaRepository.deleteAll();
             lekarzRepository.deleteAll();
             harmonogramRepository.deleteAll();
             wizytaRepository.deleteAll();
+            userRepository.deleteAll();
 
-            // Seed Users
-            User user1 = new User();
-            user1.setLogin("jdoe");
-            user1.setPassword("password123");
-            user1.setFirstName("John");
-            user1.setLastName("Doe");
-            user1.setEmail("johndoe@example.com");
-            user1.setPhone("+1234567890");
-            user1.setRole("USER");
-            user1.setBirthDate(LocalDate.of(1990, 1, 1));
+            Random random = new Random();
 
-            User user2 = new User();
-            user2.setLogin("asmith");
-            user2.setPassword("password123");
-            user2.setFirstName("Anna");
-            user2.setLastName("Smith");
-            user2.setEmail("annasmith@example.com");
-            user2.setPhone("+9876543210");
-            user2.setRole("USER");
-            user2.setBirthDate(LocalDate.of(1985, 5, 15));
+            // Seed Admin
+            User admin = new User();
+            admin.setLogin("admin");
+            admin.setPassword(passwordEncoder.encode("Admin-112"));
+            admin.setFirstName("System");
+            admin.setLastName("Administrator");
+            admin.setEmail("admin@example.com");
+            admin.setPhone("+1111111111");
+            admin.setRole("ROLE_ADMIN");
+            admin.setBirthDate(LocalDate.of(1980, 1, 1));
 
-            userRepository.saveAll(Arrays.asList(user1, user2));
+            // Seed Regular User
+            User user = new User();
+            user.setLogin("user");
+            user.setPassword(passwordEncoder.encode("User-112"));
+            user.setFirstName("Regular");
+            user.setLastName("User");
+            user.setEmail("user@example.com");
+            user.setPhone("+2222222222");
+            user.setBirthDate(LocalDate.of(1990, 1, 1));
+
+            // Generate random users (patients)
+            List<User> patients = new ArrayList<>(List.of(user));
+            for (int i = 1; i <= 3; i++) {
+                User newUser = new User();
+                newUser.setLogin("patient" + i);
+                newUser.setPassword(passwordEncoder.encode("password" + i));
+                newUser.setFirstName("PatientFirstName" + i);
+                newUser.setLastName("PatientLastName" + i);
+                newUser.setEmail("patient" + i + "@example.com");
+                newUser.setPhone("+12345678" + i);
+                newUser.setBirthDate(LocalDate.of(1990 + i, 1, 1));
+                patients.add(newUser);
+            }
+            userRepository.saveAll(List.of(admin)); // Save admin separately
+            userRepository.saveAll(patients);
 
             // Seed Specjalizacje
-            Specjalizacja spec1 = new Specjalizacja();
-            spec1.setNazwa("Cardiology");
+            Specjalizacja cardio = new Specjalizacja();
+            cardio.setNazwa("Cardiology");
 
-            Specjalizacja spec2 = new Specjalizacja();
-            spec2.setNazwa("Neurology");
+            Specjalizacja neuro = new Specjalizacja();
+            neuro.setNazwa("Neurology");
 
-            specjalizacjaRepository.saveAll(Arrays.asList(spec1, spec2));
+            Specjalizacja ortho = new Specjalizacja();
+            ortho.setNazwa("Orthopedics");
+
+            List<Specjalizacja> specjalizacje = List.of(cardio, neuro, ortho);
+            specjalizacjaRepository.saveAll(specjalizacje);
+
+            // Generate random doctors
+            List<User> doctors = new ArrayList<>();
+            for (int i = 1; i <= 3; i++) {
+                User doctorUser = new User();
+                doctorUser.setLogin("doctor" + i);
+                doctorUser.setPassword("password" + i);
+                doctorUser.setFirstName("DoctorFirstName" + i);
+                doctorUser.setLastName("DoctorLastName" + i);
+                doctorUser.setEmail("doctor" + i + "@example.com");
+                doctorUser.setPhone("+98765432" + i);
+                doctorUser.setRole("ROLE_DOCTOR"); // Mark as a doctor
+                doctorUser.setBirthDate(LocalDate.of(1980 + i, 1, 1));
+                doctors.add(doctorUser);
+            }
+            userRepository.saveAll(doctors);
 
             // Seed Lekarze
-            Lekarz lekarz1 = new Lekarz();
-            lekarz1.setUserId(user1.getId());
-            lekarz1.setSpecjalizacjaId(spec1.getId());
+            List<Lekarz> lekarze = new ArrayList<>();
+            for (int i = 0; i < doctors.size(); i++) {
+                Lekarz lekarz = new Lekarz();
+                lekarz.setUserId(doctors.get(i).getId());
+                lekarz.setSpecjalizacjaId(specjalizacje.get(i % specjalizacje.size()).getId());
+                lekarze.add(lekarz);
+            }
+            lekarzRepository.saveAll(lekarze);
 
-            Lekarz lekarz2 = new Lekarz();
-            lekarz2.setUserId(user2.getId());
-            lekarz2.setSpecjalizacjaId(spec2.getId());
+            // Seed Harmonograms
+            List<Harmonogram> harmonograms = new ArrayList<>();
+            for (Lekarz lekarz : lekarze) {
+                Harmonogram harmonogram = new Harmonogram();
+                harmonogram.setLekarz_id(lekarz.getId());
+                harmonogram.setDays(Arrays.asList(DayOfWeek.values()).subList(0, random.nextInt(5) + 2)); // Random days
+                harmonogram.setStart_time(LocalTime.of(9, 0));
+                harmonogram.setEnd_time(LocalTime.of(17, 0));
+                harmonograms.add(harmonogram);
+            }
+            harmonogramRepository.saveAll(harmonograms);
 
-            lekarzRepository.saveAll(Arrays.asList(lekarz1, lekarz2));
-
-            // Seed Harmonogram
-            Harmonogram harmonogram1 = new Harmonogram();
-            harmonogram1.setLekarz_id(Integer.parseInt(lekarz1.getId()));
-            harmonogram1.setData(new Date());
-            harmonogram1.setGodzina_od(Time.valueOf("09:00:00"));
-            harmonogram1.setGodzina_do(Time.valueOf("12:00:00"));
-
-            Harmonogram harmonogram2 = new Harmonogram();
-            harmonogram2.setLekarz_id(Integer.parseInt(lekarz2.getId()));
-            harmonogram2.setData(new Date());
-            harmonogram2.setGodzina_od(Time.valueOf("13:00:00"));
-            harmonogram2.setGodzina_do(Time.valueOf("17:00:00"));
-
-            harmonogramRepository.saveAll(Arrays.asList(harmonogram1, harmonogram2));
-
-            // Seed Wizyta
-            Wizyta wizyta1 = new Wizyta();
-            wizyta1.setPacjent_id(Integer.parseInt(user1.getId()));
-            wizyta1.setLekarz_id(Integer.parseInt(lekarz1.getId()));
-            wizyta1.setData_wizyty(new Date());
-            wizyta1.setStatus("SCHEDULED");
-
-            Wizyta wizyta2 = new Wizyta();
-            wizyta2.setPacjent_id(Integer.parseInt(user2.getId()));
-            wizyta2.setLekarz_id(Integer.parseInt(lekarz2.getId()));
-            wizyta2.setData_wizyty(new Date());
-            wizyta2.setStatus("COMPLETED");
-
-            wizytaRepository.saveAll(Arrays.asList(wizyta1, wizyta2));
+            // Seed Wizyty
+            List<Wizyta> wizyty = new ArrayList<>();
+            for (int i = 0; i < 5; i++) {
+                Wizyta wizyta = new Wizyta();
+                wizyta.setUser_id(patients.get(random.nextInt(patients.size())).getId());
+                wizyta.setLekarz_id(lekarze.get(random.nextInt(lekarze.size())).getId());
+                wizyta.setStart_time(LocalDateTime.of(2024, 12, random.nextInt(20) + 1, random.nextInt(8) + 9, 0));
+                wizyta.setEnd_time(wizyta.getStart_time().toLocalTime().plusHours(1));
+                wizyta.setStatus(random.nextBoolean() ? "SCHEDULED" : "COMPLETED");
+                wizyty.add(wizyta);
+            }
+            wizytaRepository.saveAll(wizyty);
 
             System.out.println("Database seeding completed!");
         };

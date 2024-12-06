@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/users")
@@ -61,11 +62,21 @@ public class UserController {
     @GetMapping("/add")
     public String showAddUserForm(Model model) {
         model.addAttribute("title", "Dodaj użytkownika");
-        model.addAttribute("fields", Arrays.asList("login", "password", "confirmPassword", "firstName", "lastName", "email", "phone", "role"));
+        model.addAttribute("fields", Arrays.asList(
+                Map.of("name", "login", "label", "Login", "type", "text", "placeholder", "Wpisz login"),
+                Map.of("name", "password", "label", "Hasło", "type", "text", "placeholder", "Wpisz hasło"),
+                Map.of("name", "confirmPassword", "label", "Potwierdź Hasło", "type", "text", "placeholder", "Potwierdź hasło"),
+                Map.of("name", "firstName", "label", "Imię", "type", "text", "placeholder", "Wpisz imię"),
+                Map.of("name", "lastName", "label", "Nazwisko", "type", "text", "placeholder", "Wpisz nazwisko"),
+                Map.of("name", "email", "label", "Email", "type", "text", "placeholder", "Wpisz email"),
+                Map.of("name", "phone", "label", "Telefon", "type", "text", "placeholder", "Wpisz telefon"),
+                Map.of("name", "role", "label", "Rola", "type", "text", "placeholder", "Wpisz rolę")
+        ));
         model.addAttribute("entity", new User());
         model.addAttribute("actionUrl", "/users/add");
-        return "base-form"; // Using your generic 'base-form' template
+        return "base-form";
     }
+
 
     /**
      * Handle the form submission for adding a new user.

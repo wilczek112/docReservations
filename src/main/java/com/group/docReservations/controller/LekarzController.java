@@ -1,7 +1,6 @@
 package com.group.docReservations.controller;
 
 import com.group.docReservations.classes.Lekarz;
-import com.group.docReservations.classes.Specjalizacja;
 import com.group.docReservations.exception.ResourceNotFoundException;
 import com.group.docReservations.services.LekarzService;
 import com.group.docReservations.services.SpecjalizacjaService;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/lekarze")
@@ -47,11 +47,22 @@ public class LekarzController {
 
     @GetMapping("/add")
     public String showAddLekarzForm(Model model) {
-        populateDropdowns(model);
-        model.addAttribute("title", "Dodaj lekarza");
+        model.addAttribute("title", "Dodaj Lekarza");
         model.addAttribute("entity", new Lekarz());
         model.addAttribute("actionUrl", "/lekarze/add");
-        return "lekarz-form";
+
+        model.addAttribute("fields", Arrays.asList(
+                Map.of("name", "userId", "label", "Użytkownik", "type", "dropdown", "placeholder", "Wybierz użytkownika", "options", userService.findAllUsers()
+                        .stream()
+                        .map(user -> Map.of("value", user.getId(), "label", user.getFirstName() + " " + user.getLastName()))
+                        .toList()),
+                Map.of("name", "specjalizacjaId", "label", "Specjalizacja", "type", "dropdown", "placeholder", "Wybierz specjalizację", "options", specjalizacjaService.findAllSpecjalizacje()
+                        .stream()
+                        .map(spec -> Map.of("value", spec.getId(), "label", spec.getNazwa()))
+                        .toList())
+        ));
+
+        return "base-form";
     }
 
     @PostMapping("/add")
@@ -60,7 +71,7 @@ public class LekarzController {
             populateDropdowns(model);
             model.addAttribute("title", "Dodaj lekarza");
             model.addAttribute("actionUrl", "/lekarze/add");
-            return "lekarz-form";
+            return "base-form";
         }
         try {
             lekarz.setId(null);
@@ -71,7 +82,7 @@ public class LekarzController {
             populateDropdowns(model);
             model.addAttribute("message", "Nie udało się dodać lekarza.");
             model.addAttribute("messageType", "error");
-            return "lekarz-form";
+            return "base-form";
         }
         return "redirect:/lekarze";
     }
@@ -80,11 +91,21 @@ public class LekarzController {
     public String showEditLekarzForm(@PathVariable String id, Model model) {
         Lekarz lekarz = lekarzService.findLekarzById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Lekarz not found with id " + id));
-        populateDropdowns(model);
         model.addAttribute("title", "Edytuj lekarza");
         model.addAttribute("entity", lekarz);
         model.addAttribute("actionUrl", "/lekarze/edit/" + id);
-        return "lekarz-form";
+
+        model.addAttribute("fields", Arrays.asList(
+                Map.of("name", "userId", "label", "Użytkownik", "type", "dropdown", "placeholder", "Wybierz użytkownika", "options", userService.findAllUsers()
+                        .stream()
+                        .map(user -> Map.of("value", user.getId(), "label", user.getFirstName() + " " + user.getLastName()))
+                        .toList()),
+                Map.of("name", "specjalizacjaId", "label", "Specjalizacja", "type", "dropdown", "placeholder", "Wybierz specjalizację", "options", specjalizacjaService.findAllSpecjalizacje()
+                        .stream()
+                        .map(spec -> Map.of("value", spec.getId(), "label", spec.getNazwa()))
+                        .toList())
+        ));
+        return "base-form";
     }
 
     @PostMapping("/edit/{id}")
@@ -93,28 +114,21 @@ public class LekarzController {
             populateDropdowns(model);
             model.addAttribute("title", "Edytuj lekarza");
             model.addAttribute("actionUrl", "/lekarze/edit/" + id);
-            return "lekarz-form";
+            return "base-form";
         }
         try {
-            // Set the ID for the existing Lekarz object
             lekarz.setId(id);
-
-            // Debugging: Print the userId and specjalizacjaId
-            System.out.println("Updating Lekarz ID: " + id);
-            System.out.println("New User ID: " + lekarz.getUserId());
-            System.out.println("New Specjalizacja ID: " + lekarz.getSpecjalizacjaId());
-
-            // Update the Lekarz object in the database
             lekarzService.updateLekarz(lekarz);
+            model.addAttribute("message", "Lekarz zaktualizowany pomyślnie.");
+            model.addAttribute("messageType", "success");
         } catch (Exception e) {
             populateDropdowns(model);
             model.addAttribute("message", "Nie udało się zaktualizować lekarza.");
             model.addAttribute("messageType", "error");
-            return "lekarz-form";
+            return "base-form";
         }
         return "redirect:/lekarze";
     }
-
 
     @GetMapping("/delete/{id}")
     public String deleteLekarz(@PathVariable String id) {
@@ -123,7 +137,6 @@ public class LekarzController {
     }
 
     private void populateDropdowns(Model model) {
-        // Populate dropdowns with users and specializations
         model.addAttribute("users", userService.findAllUsers());
         model.addAttribute("specjalizacje", specjalizacjaService.findAllSpecjalizacje());
     }

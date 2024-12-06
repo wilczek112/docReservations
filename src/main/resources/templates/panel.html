@@ -37,7 +37,10 @@
 <div class="container">
     <h2>Witamy, <span th:text="${user.login}"></span>!</h2>
     <p>Aktualny czas: <span id="current-time"></span></p>
-    <button class="button" th:href="@{/users}" onclick="location.href='/users'">Lista Użytkowników</button>
+    <button class="button" th:href="@{/users}" onclick="location.href='/users'">Użytkownicy</button>
+    <button class="button" th:href="@{/lekarze}" onclick="location.href='/lekarze'">Lekarze</button>
+    <button class="button" th:href="@{/wizyty}" onclick="location.href='/wizyty'">Wizyty</button>
+    <button class="button" th:href="@{/harmonogramy}" onclick="location.href='/harmonogramy'">Harmonogramy</button>
     <button class="button" th:href="@{/logout}" onclick="location.href='/logout'">Wyloguj się</button>
 </div>
 <script>
