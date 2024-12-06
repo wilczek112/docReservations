@@ -50,7 +50,7 @@ public class SpringSecurity {
                         .requestMatchers("/panel/**").hasAnyRole("USER", "ADMIN")
 
                         // Secure admin endpoints
-                        .requestMatchers("/admin/**", "/users/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**", "/users/**", "/lekarze/**").hasRole("ADMIN")
 
                         // Any other request requires authentication
                         .anyRequest().authenticated()

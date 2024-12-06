@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title th:text="${title}">Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f4f4f4;
+    }
+    .container {
+      background-color: #fff;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      width: 400px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    input[type="text"], input[type="email"], input[type="date"], select {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+    .button {
+      padding: 10px 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2 th:text="${title}">Form</h2>
+  <form th:action="${actionUrl}" th:object="${entity}" method="post">
+    <!-- Hidden input for 'id' -->
+    <input type="hidden" th:field="*{id}" />
+
+    <!-- Searchable User Dropdown -->
+    <div class="form-group">
+      <label for="searchUser">Search User</label>
+      <input type="text" id="searchUser" placeholder="Search by name or last name" oninput="searchUser()" />
+      <select id="userDropdown" th:field="*{userId}" class="form-control">
+        <option value="" disabled selected>Select a user</option>
+        <option th:each="user : ${users}" th:value="${user.id}"
+                th:text="${user.firstName + ' ' + user.lastName + ' (' + user.id + ')'}"></option>
+      </select>
+    </div>
+
+    <!-- Specjalizacja Dropdown -->
+    <div class="form-group">
+      <label for="specjalizacjaId">Specjalizacja</label>
+      <select th:field="*{specjalizacjaId}" class="form-control" id="specjalizacjaId">
+        <option value="" disabled selected>Select a specialization</option>
+        <option th:each="specjalizacja : ${specjalizacje}" th:value="${specjalizacja.id}"
+                th:text="${specjalizacja.nazwa}"></option>
+      </select>
+    </div>
+
+    <button type="submit" class="button">Zapisz</button>
+    <button type="button" class="button" onclick="history.back();">Anuluj</button>
+  </form>
+</div>
+
+<script>
+  // JavaScript function for filtering user options dynamically
+  function searchUser() {
+    const input = document.getElementById('searchUser').value.toLowerCase();
+    const options = document.getElementById('userDropdown').options;
+    for (let i = 1; i < options.length; i++) { // Skip the first option (placeholder)
+      const text = options[i].textContent.toLowerCase();
+      options[i].style.display = text.includes(input) ? '' : 'none';
+    }
+  }
+</script>
+</body>
+</html>

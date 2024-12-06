@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "specjalizacja")
 public class Specjalizacja {
     @Id
-    private String specjalizacja_id;
+    private String id;
 
     private String nazwa;
 }

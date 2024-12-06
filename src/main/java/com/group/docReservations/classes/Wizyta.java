@@ -12,7 +12,7 @@ import java.util.Date;
 @Document(collection = "wizyta")
 public class Wizyta {
     @Id
-    private String wizyta_id;
+    private String id;
 
     private int pacjent_id;
     private int lekarz_id;

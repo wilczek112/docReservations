@@ -13,7 +13,7 @@ import java.util.Date;
 @Document(collection = "harmonogram")
 public class Harmonogram {
     @Id
-    private String harmonogram_id;
+    private String id;
 
     private int lekarz_id;
     private Date data;

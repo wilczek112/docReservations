@@ -7,9 +7,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Getter
 @Setter
-@Document(collection = "lekarz")
+@Document(collection = "lekarze")
 public class Lekarz {
     @Id
+    private String id;
+
     private String userId;
-    private int specjalizacjaId;
+    private String specjalizacjaId;
 }
