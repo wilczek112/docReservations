@@ -135,11 +135,19 @@ public class UserController {
         User user = userService.findUserById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + id));
         model.addAttribute("title", "Edytuj użytkownika");
-        model.addAttribute("fields", Arrays.asList("login", "firstName", "lastName", "email", "phone", "role"));
+        model.addAttribute("fields", Arrays.asList(
+                Map.of("name", "login", "label", "Login", "type", "text", "placeholder", "Wpisz login"),
+                Map.of("name", "firstName", "label", "Imię", "type", "text", "placeholder", "Wpisz imię"),
+                Map.of("name", "lastName", "label", "Nazwisko", "type", "text", "placeholder", "Wpisz nazwisko"),
+                Map.of("name", "email", "label", "Email", "type", "text", "placeholder", "Wpisz email"),
+                Map.of("name", "phone", "label", "Telefon", "type", "text", "placeholder", "Wpisz telefon"),
+                Map.of("name", "role", "label", "Rola", "type", "text", "placeholder", "Wpisz rolę")
+        ));
         model.addAttribute("entity", user);
         model.addAttribute("actionUrl", "/users/edit/" + id);
-        return "base-form"; // Reuse the same 'base-form' template
+        return "base-form"; // Reuse the dynamic form template
     }
+
 
     /**
      * Handle the form submission for editing an existing user.
