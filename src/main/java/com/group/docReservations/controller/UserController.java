@@ -92,7 +92,8 @@ public class UserController {
         }
         // Check for existing login or email
         User existingLogin = userService.findUserByLogin(user.getLogin());
-        User existingEmail = userService.findUserByEmail(user.getEmail());
+        User existingEmail = userService.findUserByEmail(user.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found for email " + user.getEmail()));
 
         if (existingLogin != null) {
             result.rejectValue("login", null, "Istnieje już użytkownik o tym loginie.");

@@ -58,7 +58,7 @@ public class WizytaController {
                         .map(lekarz -> Map.of("value", lekarz.getId(), "label", lekarz.getUserId()))
                         .toList()),
                 Map.of("name", "start_time", "label", "Początek Wizyty", "type", "datetime-local"),
-                Map.of("name", "end_time", "label", "Koniec Wizyty", "type", "time"),
+                Map.of("name", "end_time", "label", "Koniec Wizyty", "type", "datetime-local"),
                 Map.of("name", "status", "label", "Status", "type", "text", "placeholder", "Wpisz status wizyty")
         ));
         model.addAttribute("entity", new Wizyta());
@@ -76,7 +76,7 @@ public class WizytaController {
         }
 
         LocalDateTime startDateTime = wizyta.getStart_time();
-        LocalDateTime endDateTime = wizyta.getEndDateTime();
+        LocalDateTime endDateTime = wizyta.getEnd_time();
 
         if (endDateTime.isBefore(startDateTime)) {
             result.rejectValue("end_time", "error.entity", "Koniec wizyty musi być później niż początek.");
@@ -89,7 +89,7 @@ public class WizytaController {
         try {
             wizyta.setId(null);
             wizytaService.saveWizyta(wizyta);
-            model.addAttribute("message", "Wizyta zostałs dodana pomyślnie.");
+            model.addAttribute("message", "Wizyta została dodana pomyślnie.");
             model.addAttribute("messageType", "success");
         } catch (Exception e) {
             populateDropdowns(model);
@@ -109,7 +109,6 @@ public class WizytaController {
         model.addAttribute("entity", wizyta);
         model.addAttribute("actionUrl", "/wizyty/edit/" + id);
 
-        // Prepare dynamic fields
         model.addAttribute("fields", Arrays.asList(
                 Map.of("name", "user_id", "label", "Pacjent", "type", "dropdown", "placeholder", "Wybierz pacjenta", "options", userService.findAllUsers()
                         .stream()
@@ -120,7 +119,7 @@ public class WizytaController {
                         .map(lekarz -> Map.of("value", lekarz.getId(), "label", lekarz.getUserId()))
                         .toList()),
                 Map.of("name", "start_time", "label", "Początek Wizyty", "type", "datetime-local"),
-                Map.of("name", "end_time", "label", "Koniec Wizyty", "type", "time"),
+                Map.of("name", "end_time", "label", "Koniec Wizyty", "type", "datetime-local"),
                 Map.of("name", "status", "label", "Status", "type", "text", "placeholder", "Wpisz status wizyty")
         ));
 
@@ -137,7 +136,7 @@ public class WizytaController {
         }
 
         LocalDateTime startDateTime = wizyta.getStart_time();
-        LocalDateTime endDateTime = wizyta.getEndDateTime();
+        LocalDateTime endDateTime = wizyta.getEnd_time();
 
         if (endDateTime.isBefore(startDateTime)) {
             result.rejectValue("end_time", "error.entity", "Koniec wizyty musi być później niż początek.");

@@ -7,7 +7,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -22,12 +21,12 @@ public class Wizyta {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime start_time;
 
-    @DateTimeFormat(pattern = "HH:mm")
-    private LocalTime end_time;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime end_time;
 
     private String status;
 
-    public LocalDateTime getEndDateTime() {
-        return LocalDateTime.of(start_time.toLocalDate(), end_time);
+    public void setEnd_time(LocalDateTime start_time, int durationMinutes) {
+        this.end_time = start_time.plusMinutes(durationMinutes);
     }
 }

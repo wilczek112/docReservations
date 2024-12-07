@@ -1,7 +1,10 @@
 package com.group.docReservations.controller;
 
+import com.group.docReservations.classes.Lekarz;
 import com.group.docReservations.classes.User;
+import com.group.docReservations.exception.ResourceNotFoundException;
 import com.group.docReservations.repository.UserRepository;
+import com.group.docReservations.services.LekarzService;
 import com.group.docReservations.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
@@ -12,17 +15,23 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Controller
 public class authController {
 
     private final UserRepository userRepository;
     private final UserService userService;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final LekarzService lekarzService;
 
-    public authController(UserService userService, UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+    public authController(UserService userService, UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, LekarzService lekarzService) {
         this.userService = userService;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.lekarzService = lekarzService;
     }
 
     @GetMapping("/index")
@@ -39,17 +48,28 @@ public class authController {
     public String login() {
         return "redirect:/panel";
     }
-
     @GetMapping("/panel")
     public String panel(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
+        User user = userService.findUserByEmail(currentPrincipalName)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found for email " + currentPrincipalName));
 
-        User user = userService.findUserByEmail(currentPrincipalName);
+        // Fetch and enrich doctors with user details
+        List<Lekarz> lekarze = lekarzService.findAllLekarze();
+        List<Map<String, String>> enrichedDoctors = lekarze.stream()
+                .map(lekarz -> {
+                    User doctorUser = userService.findUserById(lekarz.getUserId())
+                            .orElseThrow(() -> new ResourceNotFoundException("User not found for doctor with ID " + lekarz.getUserId()));
+                    return Map.of(
+                            "id", lekarz.getId(),
+                            "userFirstName", doctorUser.getFirstName(),
+                            "userLastName", doctorUser.getLastName()
+                    );
+                }).collect(Collectors.toList());
+
         model.addAttribute("user", user);
-        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("doctors", enrichedDoctors);
         return "panel";
     }
 

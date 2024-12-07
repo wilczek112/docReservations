@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pl" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Główna Strona</title>
+    <title>Panel Główny</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -9,7 +9,6 @@
             padding: 0;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
             height: 100vh;
             background-color: #f4f4f4;
@@ -29,7 +28,25 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            margin-top: 10px;
+            display: block;
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        select, input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        #results {
             margin-top: 20px;
+            text-align: left;
         }
     </style>
 </head>
@@ -37,12 +54,41 @@
 <div class="container">
     <h2>Witamy, <span th:text="${user.login}"></span>!</h2>
     <p>Aktualny czas: <span id="current-time"></span></p>
+
+    <!-- Navigation Buttons -->
     <button class="button" th:href="@{/users}" onclick="location.href='/users'">Użytkownicy</button>
     <button class="button" th:href="@{/lekarze}" onclick="location.href='/lekarze'">Lekarze</button>
     <button class="button" th:href="@{/wizyty}" onclick="location.href='/wizyty'">Wizyty</button>
     <button class="button" th:href="@{/harmonogramy}" onclick="location.href='/harmonogramy'">Harmonogramy</button>
     <button class="button" th:href="@{/logout}" onclick="location.href='/logout'">Wyloguj się</button>
+
+    <!-- Search for Available Time Slots -->
+    <div id="reservation-section">
+        <h3>Znajdź wolne terminy</h3>
+        <form id="search-form">
+            <div class="form-group">
+                <label for="doctor">Wybierz lekarza</label>
+                <select id="doctor" required>
+                    <option value="" disabled selected>Wybierz lekarza</option>
+                    <option th:each="doctor : ${doctors}" th:value="${doctor.id}"
+                            th:text="${doctor.userFirstName} + ' ' + ${doctor.userLastName}"></option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="date">Wybierz dzień</label>
+                <input type="date" id="date" required>
+            </div>
+            <button type="button" class="button" onclick="searchSlots()">Szukaj</button>
+        </form>
+
+        <!-- Results -->
+        <div id="results">
+            <h4>Wolne terminy:</h4>
+            <ul id="slots-list"></ul>
+        </div>
+    </div>
 </div>
+
 <script>
     function updateTime() {
         const now = new Date();
@@ -53,6 +99,59 @@
     }
     setInterval(updateTime, 1000);
     updateTime();
+
+     function searchSlots() {
+        const doctorId = document.getElementById('doctor').value;
+        const date = document.getElementById('date').value;
+
+        if (!doctorId || !date) {
+        alert("Wybierz lekarza i dzień.");
+        return;
+    }
+
+        fetch(`/reservations/available-slots?doctorId=${doctorId}&date=${date}`)
+        .then(response => response.json())
+        .then(data => {
+        const slotsList = document.getElementById('slots-list');
+        slotsList.innerHTML = ""; // Clear previous results
+        if (data.availableSlots.length === 0) {
+        slotsList.innerHTML = "<li>Brak wolnych terminów</li>";
+    } else {
+        data.availableSlots.forEach(slot => {
+        const li = document.createElement('li');
+        li.textContent = slot;
+
+        const button = document.createElement('button');
+        button.textContent = "Zarezerwuj";
+        button.className = "button";
+        button.onclick = () => createReservation(doctorId, date, slot);
+
+        li.appendChild(button);
+        slotsList.appendChild(li);
+    });
+    }
+    })
+        .catch(error => console.error('Error fetching slots:', error));
+    }
+
+        function createReservation(doctorId, date, time) {
+        fetch(`/reservations/create`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: `doctorId=${doctorId}&date=${date}&time=${time}`
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert("Rezerwacja została utworzona pomyślnie.");
+                    searchSlots(); // Refresh slots after reservation
+                } else {
+                    alert("Nie udało się utworzyć rezerwacji.");
+                }
+            })
+            .catch(error => console.error('Error creating reservation:', error));
+    }
 </script>
 </body>
 </html>

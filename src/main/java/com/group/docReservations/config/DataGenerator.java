@@ -15,7 +15,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 @Configuration
 public class DataGenerator {
@@ -52,8 +51,6 @@ public class DataGenerator {
             wizytaRepository.deleteAll();
             userRepository.deleteAll();
 
-            Random random = new Random();
-
             // Seed Admin
             User admin = new User();
             admin.setLogin("admin");
@@ -75,21 +72,8 @@ public class DataGenerator {
             user.setPhone("+2222222222");
             user.setBirthDate(LocalDate.of(1990, 1, 1));
 
-            // Generate random users (patients)
-            List<User> patients = new ArrayList<>(List.of(user));
-            for (int i = 1; i <= 3; i++) {
-                User newUser = new User();
-                newUser.setLogin("patient" + i);
-                newUser.setPassword(passwordEncoder.encode("password" + i));
-                newUser.setFirstName("PatientFirstName" + i);
-                newUser.setLastName("PatientLastName" + i);
-                newUser.setEmail("patient" + i + "@example.com");
-                newUser.setPhone("+12345678" + i);
-                newUser.setBirthDate(LocalDate.of(1990 + i, 1, 1));
-                patients.add(newUser);
-            }
-            userRepository.saveAll(List.of(admin)); // Save admin separately
-            userRepository.saveAll(patients);
+            // Save Admin and User
+            userRepository.saveAll(List.of(admin, user));
 
             // Seed Specjalizacje
             Specjalizacja cardio = new Specjalizacja();
@@ -104,19 +88,19 @@ public class DataGenerator {
             List<Specjalizacja> specjalizacje = List.of(cardio, neuro, ortho);
             specjalizacjaRepository.saveAll(specjalizacje);
 
-            // Generate random doctors
+            // Seed Doctors
             List<User> doctors = new ArrayList<>();
             for (int i = 1; i <= 3; i++) {
-                User doctorUser = new User();
-                doctorUser.setLogin("doctor" + i);
-                doctorUser.setPassword("password" + i);
-                doctorUser.setFirstName("DoctorFirstName" + i);
-                doctorUser.setLastName("DoctorLastName" + i);
-                doctorUser.setEmail("doctor" + i + "@example.com");
-                doctorUser.setPhone("+98765432" + i);
-                doctorUser.setRole("ROLE_DOCTOR"); // Mark as a doctor
-                doctorUser.setBirthDate(LocalDate.of(1980 + i, 1, 1));
-                doctors.add(doctorUser);
+                User doctor = new User();
+                doctor.setLogin("doctor" + i);
+                doctor.setPassword(passwordEncoder.encode("Doctor-" + i));
+                doctor.setFirstName("DoctorFirstName" + i);
+                doctor.setLastName("DoctorLastName" + i);
+                doctor.setEmail("doctor" + i + "@example.com");
+                doctor.setPhone("+98765432" + i);
+                doctor.setRole("ROLE_DOCTOR");
+                doctor.setBirthDate(LocalDate.of(1980 + i, 1, 1));
+                doctors.add(doctor);
             }
             userRepository.saveAll(doctors);
 
@@ -130,29 +114,63 @@ public class DataGenerator {
             }
             lekarzRepository.saveAll(lekarze);
 
-            // Seed Harmonograms
+            // Seed Static Harmonograms
             List<Harmonogram> harmonograms = new ArrayList<>();
-            for (Lekarz lekarz : lekarze) {
-                Harmonogram harmonogram = new Harmonogram();
-                harmonogram.setLekarz_id(lekarz.getId());
-                harmonogram.setDays(Arrays.asList(DayOfWeek.values()).subList(0, random.nextInt(5) + 2)); // Random days
-                harmonogram.setStart_time(LocalTime.of(9, 0));
-                harmonogram.setEnd_time(LocalTime.of(17, 0));
-                harmonograms.add(harmonogram);
-            }
+
+            Harmonogram harmonogram1 = new Harmonogram();
+            harmonogram1.setLekarz_id(lekarze.get(0).getId());
+            harmonogram1.setDays(List.of(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY));
+            harmonogram1.setStart_time(LocalTime.of(9, 0));
+            harmonogram1.setEnd_time(LocalTime.of(13, 0));
+            harmonograms.add(harmonogram1);
+
+            Harmonogram harmonogram2 = new Harmonogram();
+            harmonogram2.setLekarz_id(lekarze.get(1).getId());
+            harmonogram2.setDays(List.of(DayOfWeek.TUESDAY, DayOfWeek.THURSDAY));
+            harmonogram2.setStart_time(LocalTime.of(10, 0));
+            harmonogram2.setEnd_time(LocalTime.of(14, 0));
+            harmonograms.add(harmonogram2);
+
+            Harmonogram harmonogram3 = new Harmonogram();
+            harmonogram3.setLekarz_id(lekarze.get(2).getId());
+            harmonogram3.setDays(List.of(DayOfWeek.FRIDAY));
+            harmonogram3.setStart_time(LocalTime.of(11, 0));
+            harmonogram3.setEnd_time(LocalTime.of(15, 0));
+            harmonograms.add(harmonogram3);
+
             harmonogramRepository.saveAll(harmonograms);
 
-            // Seed Wizyty
+            // Seed Static Wizyty
             List<Wizyta> wizyty = new ArrayList<>();
-            for (int i = 0; i < 5; i++) {
-                Wizyta wizyta = new Wizyta();
-                wizyta.setUser_id(patients.get(random.nextInt(patients.size())).getId());
-                wizyta.setLekarz_id(lekarze.get(random.nextInt(lekarze.size())).getId());
-                wizyta.setStart_time(LocalDateTime.of(2024, 12, random.nextInt(20) + 1, random.nextInt(8) + 9, 0));
-                wizyta.setEnd_time(wizyta.getStart_time().toLocalTime().plusHours(1));
-                wizyta.setStatus(random.nextBoolean() ? "SCHEDULED" : "COMPLETED");
-                wizyty.add(wizyta);
+            for (int i = 0; i < lekarze.size(); i++) {
+                Lekarz lekarz = lekarze.get(i);
+                List<DayOfWeek> workingDays = harmonograms.get(i).getDays();
+
+                for (DayOfWeek day : workingDays) {
+                    LocalDate date = LocalDate.of(2024, 12, 1).with(day);
+                    LocalDateTime firstSlotStart = date.atTime(harmonograms.get(i).getStart_time());
+                    LocalDateTime secondSlotStart = firstSlotStart.plusHours(1);
+
+                    // First visit of the day
+                    Wizyta wizyta1 = new Wizyta();
+                    wizyta1.setUser_id(user.getId());
+                    wizyta1.setLekarz_id(lekarz.getId());
+                    wizyta1.setStart_time(firstSlotStart);
+                    wizyta1.setEnd_time(firstSlotStart.plusMinutes(30));
+                    wizyta1.setStatus("SCHEDULED");
+                    wizyty.add(wizyta1);
+
+                    // Second visit of the day
+                    Wizyta wizyta2 = new Wizyta();
+                    wizyta2.setUser_id(user.getId());
+                    wizyta2.setLekarz_id(lekarz.getId());
+                    wizyta2.setStart_time(secondSlotStart);
+                    wizyta2.setEnd_time(secondSlotStart.plusMinutes(30));
+                    wizyta2.setStatus("SCHEDULED");
+                    wizyty.add(wizyta2);
+                }
             }
+
             wizytaRepository.saveAll(wizyty);
 
             System.out.println("Database seeding completed!");
