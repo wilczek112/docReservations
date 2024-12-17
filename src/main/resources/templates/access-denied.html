@@ -2,11 +2,17 @@
 <html lang="pl" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Brak Dostępu</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -14,48 +20,78 @@
             height: 100vh;
             background-color: #f4f4f4;
         }
+
+        .careplanner-header {
+            font-family: 'Georgia', serif;
+            font-size: 6rem;
+            color: #00b894;
+            text-align: center;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        .careplanner-header .planner {
+            font-family: 'Arial', sans-serif;
+            font-weight: normal;
+        }
+
         .container {
-            background-color: #fff;
-            padding: 30px;
+            background-color: #00b894;
+            color: white;
+            padding: 2rem;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
-            width: 500px;
             text-align: center;
+            max-width: 600px;
+            width: 90%;
         }
-        .container h2 {
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
             color: #dc3545;
-            margin-bottom: 20px;
         }
-        .container p {
-            font-size: 18px;
-            color: #333;
-            margin-bottom: 30px;
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
         }
-        .button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin: 0 10px;
-            font-size: 16px;
-        }
-        .button:hover {
-            background-color: #0056b3;
-        }
+
         .button-container {
             display: flex;
             justify-content: center;
+            gap: 1rem;
         }
+
+        .button {
+            padding: 0.8rem 1.5rem;
+            background-color: #fff;
+            color: #00b894;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+        }
+
+        .button:hover {
+            background-color: #dff9fb;
+        }
+
         .user-info {
-            margin-bottom: 20px;
-            font-size: 16px;
-            color: #555;
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            color: #f2f2f2;
         }
     </style>
 </head>
 <body>
+<div class="careplanner-header">
+    <span>Care</span><span class="planner">Planner</span>
+</div>
+
 <div class="container">
     <h2>Brak Dostępu</h2>
     <div class="user-info" th:if="${#authentication?.principal != null}">
@@ -63,8 +99,8 @@
     </div>
     <p>Nie masz uprawnień do wyświetlenia tej strony.</p>
     <div class="button-container">
-        <button class="button" onclick="location.href='/panel'">Powrót do Panelu</button>
-        <button class="button" onclick="location.href='/logout'">Wyloguj się</button>
+        <a class="button" href="/panel">Powrót do Panelu</a>
+        <a class="button" href="/logout">Wyloguj się</a>
     </div>
 </div>
 </body>

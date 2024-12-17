@@ -2,68 +2,151 @@
 <html lang="pl" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Panel Główny</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
+            justify-content: center;
             align-items: center;
             height: 100vh;
             background-color: #f4f4f4;
         }
-        .container {
-            background-color: #fff;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            width: 400px;
+
+        .careplanner-header {
+            font-family: 'Georgia', serif;
+            font-size: 6rem;
+            color: #00b894;
             text-align: center;
+            margin-bottom: 1rem;
+            font-weight: bold;
         }
-        .button {
-            padding: 10px 15px;
-            background-color: #dc3545;
+
+        .careplanner-header .planner {
+            font-family: 'Arial', sans-serif;
+            font-weight: normal;
+        }
+
+        .panel-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 800px;
+            padding: 2rem;
+            background-color: #00b894;
             color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 1rem;
+            gap: 1rem;
+            width: 100%;
+        }
+
+        .button {
+            flex: 1;
+            max-width: 150px;
+            padding: 0.8rem 1.2rem;
+            background-color: #fff;
+            color: #00b894;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
             cursor: pointer;
-            margin-top: 10px;
-            display: block;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
         }
+
+        .button:hover {
+            background-color: #dff9fb;
+        }
+
+        .search-section {
+            margin-top: 2rem;
+            background-color: white;
+            color: #333;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+
         .form-group {
-            margin: 15px 0;
+            margin-bottom: 1rem;
         }
+
         label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
         }
-        select, input {
+
+        select, input, button {
             width: 100%;
-            padding: 8px;
+            padding: 0.8rem;
             border: 1px solid #ccc;
-            border-radius: 4px;
+            border-radius: 5px;
         }
-        #results {
-            margin-top: 20px;
-            text-align: left;
+
+        .form-btn {
+            background-color: #00b894;
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .form-btn:hover {
+            background-color: #019875;
+        }
+
+        #current-time {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            color: white;
         }
     </style>
 </head>
 <body>
-<div class="container">
+<div class="careplanner-header">
+    <span>Care</span><span class="planner">Planner</span>
+</div>
+
+<div class="panel-container">
     <h2>Witamy, <span th:text="${user.login}"></span>!</h2>
-    <p>Aktualny czas: <span id="current-time"></span></p>
+    <p id="current-time">Aktualny czas: </p>
 
-    <!-- Navigation Buttons -->
-    <button class="button" th:href="@{/users}" onclick="location.href='/users'">Użytkownicy</button>
-    <button class="button" th:href="@{/lekarze}" onclick="location.href='/lekarze'">Lekarze</button>
-    <button class="button" th:href="@{/wizyty}" onclick="location.href='/wizyty'">Wizyty</button>
-    <button class="button" th:href="@{/harmonogramy}" onclick="location.href='/harmonogramy'">Harmonogramy</button>
-    <button class="button" th:href="@{/logout}" onclick="location.href='/logout'">Wyloguj się</button>
+    <div class="button-container">
+        <button class="button" onclick="location.href='/users'">Użytkownicy</button>
+        <button class="button" onclick="location.href='/lekarze'">Lekarze</button>
+        <button class="button" onclick="location.href='/wizyty'">Wizyty</button>
+        <button class="button" onclick="location.href='/harmonogramy'">Harmonogramy</button>
+        <button class="button" onclick="location.href='/logout'">Wyloguj się</button>
+    </div>
 
-    <!-- Search for Available Time Slots -->
-    <div id="reservation-section">
+    <div class="search-section">
         <h3>Znajdź wolne terminy</h3>
         <form id="search-form">
             <div class="form-group">
@@ -78,10 +161,8 @@
                 <label for="date">Wybierz dzień</label>
                 <input type="date" id="date" required>
             </div>
-            <button type="button" class="button" onclick="searchSlots()">Szukaj</button>
+            <button type="button" class="form-btn" onclick="searchSlots()">Szukaj</button>
         </form>
-
-        <!-- Results -->
         <div id="results">
             <h4>Wolne terminy:</h4>
             <ul id="slots-list"></ul>
@@ -95,46 +176,43 @@
         const hours = now.getHours().toString().padStart(2, '0');
         const minutes = now.getMinutes().toString().padStart(2, '0');
         const seconds = now.getSeconds().toString().padStart(2, '0');
-        document.getElementById('current-time').innerText = `${hours}:${minutes}:${seconds}`;
+        document.getElementById('current-time').innerText = `Aktualny czas: ${hours}:${minutes}:${seconds}`;
     }
     setInterval(updateTime, 1000);
     updateTime();
 
-     function searchSlots() {
+    function searchSlots() {
         const doctorId = document.getElementById('doctor').value;
         const date = document.getElementById('date').value;
-
         if (!doctorId || !date) {
-        alert("Wybierz lekarza i dzień.");
-        return;
-    }
+            alert("Wybierz lekarza i dzień.");
+            return;
+        }
 
         fetch(`/reservations/available-slots?doctorId=${doctorId}&date=${date}`)
-        .then(response => response.json())
-        .then(data => {
-        const slotsList = document.getElementById('slots-list');
-        slotsList.innerHTML = ""; // Clear previous results
-        if (data.availableSlots.length === 0) {
-        slotsList.innerHTML = "<li>Brak wolnych terminów</li>";
-    } else {
-        data.availableSlots.forEach(slot => {
-        const li = document.createElement('li');
-        li.textContent = slot;
-
-        const button = document.createElement('button');
-        button.textContent = "Zarezerwuj";
-        button.className = "button";
-        button.onclick = () => createReservation(doctorId, date, slot);
-
-        li.appendChild(button);
-        slotsList.appendChild(li);
-    });
-    }
-    })
-        .catch(error => console.error('Error fetching slots:', error));
+            .then(response => response.json())
+            .then(data => {
+                const slotsList = document.getElementById('slots-list');
+                slotsList.innerHTML = "";
+                if (data.availableSlots.length === 0) {
+                    slotsList.innerHTML = "<li>Brak wolnych terminów</li>";
+                } else {
+                    data.availableSlots.forEach(slot => {
+                        const li = document.createElement('li');
+                        li.textContent = slot;
+                        const button = document.createElement('button');
+                        button.textContent = "Zarezerwuj";
+                        button.className = "form-btn";
+                        button.onclick = () => createReservation(doctorId, date, slot);
+                        li.appendChild(button);
+                        slotsList.appendChild(li);
+                    });
+                }
+            })
+            .catch(error => console.error('Error fetching slots:', error));
     }
 
-        function createReservation(doctorId, date, time) {
+    function createReservation(doctorId, date, time) {
         fetch(`/reservations/create`, {
             method: "POST",
             headers: {
@@ -145,7 +223,7 @@
             .then(response => {
                 if (response.ok) {
                     alert("Rezerwacja została utworzona pomyślnie.");
-                    searchSlots(); // Refresh slots after reservation
+                    searchSlots();
                 } else {
                     alert("Nie udało się utworzyć rezerwacji.");
                 }

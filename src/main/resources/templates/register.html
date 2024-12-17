@@ -2,65 +2,116 @@
 <html lang="pl" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Rejestracja</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             background-color: #f4f4f4;
         }
-        .register-container {
-            background-color: #fff;
-            padding: 20px;
+
+        .careplanner-header {
+            font-family: 'Georgia', serif;
+            font-size: 6rem;
+            color: #00b894;
+            text-align: center;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        .careplanner-header .planner {
+            font-family: 'Arial', sans-serif;
+            font-weight: normal;
+        }
+
+        .form-container {
+            background-color: #00b894;
+            padding: 2rem;
+            color: white;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
-            width: 400px;
+            width: 100%;
+            max-width: 500px;
             text-align: center;
         }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
         input[type="text"], input[type="password"], input[type="email"], input[type="tel"] {
             width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            border: none;
+            border-radius: 5px;
             box-sizing: border-box;
         }
-        button {
-            width: calc(50% - 10px);
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .register-button {
-            background-color: #28a745;
-        }
-        .button-container {
-            display: flex;
-            justify-content: space-between;
-        }
+
         .alert {
             background-color: #dff0d8;
             color: #3c763d;
             padding: 10px;
-            border-radius: 4px;
-            margin: 10px 0;
+            border-radius: 5px;
+            margin-bottom: 1rem;
             font-weight: bold;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .button {
+            flex: 1;
+            padding: 0.8rem;
+            background-color: #fff;
+            color: #00b894;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #dff9fb;
+        }
+
+        .register-button {
+            background-color: #fff;
+            color: #00b894;
+            transition: background-color 0.3s ease;
+        }
+
+        .register-button:hover {
+            background-color: #dff9fb;
         }
     </style>
 </head>
 <body>
-<div class="register-container">
+<div class="careplanner-header">
+    <span>Care</span><span class="planner">Planner</span>
+</div>
+
+<div class="form-container">
     <h2>Rejestracja</h2>
-    <div th:if="${param.success}">
-        <div class="alert">Rejestracja zakończona sukcesem!</div>
-    </div>
+    <div th:if="${param.success}" class="alert">Rejestracja zakończona sukcesem!</div>
     <form th:action="@{/register/saveUser}" th:object="${user}" method="post">
         <label>Login</label>
         <input type="text" placeholder="Login" th:field="*{login}" required />
@@ -90,8 +141,10 @@
         <input type="tel" placeholder="Telefon" th:field="*{phone}" required />
         <div th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="alert"></div>
 
-        <button type="submit" class="register-button">Zarejestruj</button>
-        <button type="button" onclick="location.href='/'">Powrót</button>
+        <div class="button-container">
+            <button type="submit" class="button register-button">Zarejestruj</button>
+            <button type="button" class="button" onclick="location.href='/'">Powrót</button>
+        </div>
     </form>
 </div>
 </body>

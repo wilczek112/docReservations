@@ -2,91 +2,166 @@
 <html lang="pl" xmlns:th="http://www.thymeleaf.org">
 <head>
   <title th:text="${title}">CRUD Operations</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background-color: #f4f4f4;
-    }
-    .container {
-      background-color: #fff;
-      padding: 20px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      border-radius: 8px;
-      width: 80%;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    th, td {
-      padding: 10px;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
-    th {
-      background-color: #f2f2f2;
-    }
-    .button {
-      padding: 10px 15px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      margin-top: 20px;
-    }
-     .alert {
-       padding: 10px;
-       margin-bottom: 20px;
-       border: 1px solid transparent;
-       border-radius: 4px;
-       width: 100%;
-       text-align: center;
-     }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    .alert-success {
-      color: #155724;
-      background-color: #d4edda;
-      border-color: #c3e6cb;
-    }
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+            overflow-y: auto;
+        }
 
-    .alert-error {
-      color: #721c24;
-      background-color: #f8d7da;
-      border-color: #f5c6cb;
-    }
-  </style>
+        .careplanner-header {
+            font-family: 'Georgia', serif;
+            font-size: 6rem;
+            color: #00b894;
+            text-align: center;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        .careplanner-header .planner {
+            font-family: 'Arial', sans-serif;
+            font-weight: normal;
+        }
+
+        .container {
+            background-color: #00b894;
+            color: white;
+            padding: 2rem;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            width: 90%;
+            max-width: 1000px;
+            max-height: 80vh;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .table-container {
+            overflow-y: auto;
+            flex: 1;
+            margin-top: 1rem;
+            background-color: white;
+            color: #333;
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            word-wrap: break-word;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .button {
+            margin-top: 1.5rem;
+            padding: 0.8rem 1.5rem;
+            background-color: #fff;
+            color: #00b894;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .button:hover {
+            background-color: #dff9fb;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .action-buttons a {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background-color: #fff;
+            color: #00b894;
+            text-decoration: none;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+            font-weight: bold;
+        }
+
+        .action-buttons a:hover {
+            background-color: #dff9fb;
+        }
+
+        td .action-buttons {
+            white-space: nowrap;
+        }
+
+    </style>
 </head>
 <body>
+<div class="careplanner-header">
+  <span>Care</span><span class="planner">Planner</span>
+</div>
+
 <div th:if="${message}" class="alert" th:classappend="${messageType == 'success' ? 'alert-success' : 'alert-error'}">
   <span th:text="${message}"></span>
 </div>
+
 <div class="container">
   <h2 th:text="${title}">CRUD Operations</h2>
-  <table>
-    <thead>
-    <tr>
-      <th th:each="header : ${headers}" th:text="${header}"></th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="entity : ${entities}">
-      <td th:each="field : ${fields}" th:text="${entity[field]}"></td>
-      <td>
-        <a th:href="@{${editUrl} + '/' + ${entity.id}}">Edytuj</a> |
-        <a th:href="@{${deleteUrl} + '/' + ${entity.id}}"
-           onclick="return confirm('Czy na pewno chcesz usunąć?');">Usuń</a>
-      </td>
-    </tr>
-    </tbody>
-  </table>
+  <div class="table-container">
+    <table>
+      <thead>
+      <tr>
+        <th th:each="header : ${headers}" th:text="${header}"></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="entity : ${entities}">
+        <td th:each="field : ${fields}" th:text="${entity[field]}"></td>
+        <td>
+          <div class="action-buttons">
+            <a th:href="@{${editUrl} + '/' + ${entity.id}}">Edytuj</a>
+            <a th:href="@{${deleteUrl} + '/' + ${entity.id}}" onclick="return confirm('Czy na pewno chcesz usunąć?');">Usuń</a>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
   <a class="button" th:href="${addUrl}">Dodaj</a>
   <button class="button" onclick="location.href='/panel'">Powrót do panelu</button>
 </div>

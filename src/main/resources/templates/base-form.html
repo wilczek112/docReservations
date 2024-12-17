@@ -2,62 +2,155 @@
 <html lang="pl" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title th:text="${title}">Form</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             background-color: #f4f4f4;
+            overflow-y: auto;
         }
-        .container {
-            background-color: #fff;
-            padding: 20px;
+
+        .careplanner-header {
+            font-family: 'Georgia', serif;
+            font-size: 6rem;
+            color: #00b894;
+            text-align: center;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        .careplanner-header .planner {
+            font-family: 'Arial', sans-serif;
+            font-weight: normal;
+        }
+
+        .form-container {
+            background-color: #00b894;
+            color: white;
+            padding: 2rem;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
-            width: 400px;
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+            overflow-y: auto;
         }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 1.5rem;
+            text-align: left;
         }
+
         label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
         }
+
         input[type="text"], input[type="email"], input[type="datetime-local"], input[type="time"], select {
             width: 100%;
-            padding: 8px;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 5px;
             box-sizing: border-box;
         }
+
         .checkbox-group {
             display: flex;
             flex-wrap: wrap;
+            gap: 1rem;
         }
+
         .checkbox-group label {
-            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
         .button {
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: white;
+            flex: 1;
+            padding: 0.8rem;
+            background-color: #fff;
+            color: #00b894;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
+            font-weight: bold;
             cursor: pointer;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+            display: inline-block;
+            margin: 0.2rem 0;
         }
+
+        .button:hover {
+            background-color: #dff9fb;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-buttons a {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background-color: #fff;
+            color: #00b894;
+            text-decoration: none;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+            font-weight: bold;
+        }
+
+        .action-buttons a:hover {
+            background-color: #dff9fb;
+        }
+
+        table .action-cell {
+            white-space: nowrap;
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            align-items: center;
+        }
+
     </style>
 </head>
 <body>
-<div class="container">
-    <h2 th:text="${title}">Form</h2>
+<div class="careplanner-header">
+    <span>Care</span><span class="planner">Planner</span>
+</div>
+
+<div class="form-container">
+    <h2 th:text="${title}">Formularz</h2>
     <form th:action="${actionUrl}" th:object="${entity}" method="post">
-        <!-- Hidden ID field -->
         <input type="hidden" th:field="*{id}" />
 
-        <!-- Dynamic Form Fields -->
         <div class="form-group" th:each="field : ${fields}">
             <label th:for="*{__${field.name}__}" th:text="${field.label}"></label>
 
@@ -88,9 +181,10 @@
             </div>
         </div>
 
-        <!-- Buttons -->
-        <button type="submit" class="button">Zapisz</button>
-        <button type="button" class="button" onclick="history.back();">Anuluj</button>
+        <div class="button-container">
+            <button type="submit" class="button">Zapisz</button>
+            <button type="button" class="button" onclick="history.back();">Anuluj</button>
+        </div>
     </form>
 </div>
 </body>

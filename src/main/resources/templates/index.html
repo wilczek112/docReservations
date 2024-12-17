@@ -1,50 +1,131 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarePlanner</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        * {
             margin: 0;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f4;
-        }
-        .login-container {
-            background-color: #fff;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            width: 400px;
-            text-align: center;
-        }
-        input[type="text"], input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
             box-sizing: border-box;
         }
-        button {
-            width: calc(50% - 10px);
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .register-button {
-            background-color: #28a745;
-        }
-        .button-container {
+
+        body {
+            font-family: Arial, sans-serif;
             display: flex;
-            justify-content: space-between;
+            height: 100vh;
         }
+
+        /* Lewa sekcja */
+        .left-section {
+            flex: 1;
+            background-color: #00b894;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            text-align: left;
+        }
+
+        .left-section .content-wrapper {
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .left-section h1 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .left-section h1 .care {
+            font-family: 'Georgia', serif;
+            font-weight: bold;
+            font-size: 4.5rem;
+        }
+
+        .left-section h1 .planner {
+            font-family: 'Arial', sans-serif;
+            font-weight: normal;
+            font-size: 4rem;
+        }
+
+        .left-section p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .left-section ul {
+            list-style: none;
+            padding: 0;
+            font-weight: bold;
+        }
+
+        .register-btn {
+            margin-top: 2rem;
+            width: 500px;
+            background-color: #fff;
+            color: #00b894;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .register-btn:hover {
+            background-color: #dff9fb;
+        }
+
+        /* Prawa sekcja */
+        .right-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #fff;
+        }
+
+        .login-container {
+            padding: 2rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .login-container h2 {
+            margin-bottom: 1.5rem;
+        }
+
+        .login-container input {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .login-container button {
+            width: 100%;
+            background-color: #00b894;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .login-container button:hover {
+            background-color: #019875;
+        }
+
         .alert {
             background-color: #f8d7da;
             color: #721c24;
@@ -53,57 +134,54 @@
             margin: 10px 0;
             font-weight: bold;
         }
+
+        /* Current Time Styling */
+        .current-time {
+            margin-top: 1.5rem;
+            font-size: 1rem;
+            color: #333;
+        }
     </style>
 </head>
 <body>
-<div class="login-container">
-    <h2>Login</h2>
-    <div th:if="${param.error}">
-        <div class="alert">Invalid login or password. Please try again.</div>
+<!-- Lewa sekcja -->
+<div class="left-section">
+    <div class="content-wrapper">
+        <h1><span class="care">Care</span><span class="planner">Planner</span></h1>
+        <p>Zarądzaj swoimi wizytami lekarskimi w prosty i wygodny sposób! Dzięki naszej aplikacji możesz:</p>
+        <ul>
+            <li>Rezerwować wizyty u wybranych specjalistów.</li>
+            <li>Przeglądać historię swoich wizyt.</li>
+            <li>Otrzymywać przypomnienia o nadchodzących terminach.</li>
+        </ul>
+        <button class="register-btn" onclick="location.href='/register'">Zarejestruj się</button>
     </div>
-    <div th:if="${param.logout}">
-        <div class="alert alert-success">You have been logged out.</div>
-    </div>
-    <form
-            method="post"
-            th:action="@{/login}"
-            class="form"
-            role="form"
-    >
-        <div class="inputbox">
-            <input type="text"
-                   id="username"
-                   name="username"
-                   class="form-control"
-                   placeholder="Login"
-            />
-        </div>
-
-        <div class="inputbox">
-            <input type="password"
-                   id="password"
-                   name="password"
-                   class="form-control"
-                   placeholder="Password"
-            />
-        </div>
-        <div class="button-container">
-            <button type="submit">Login</button>
-            <button type="button" class="register-button" onclick="location.href='/register'">Register</button>
-        </div>
-    </form>
-    <p id="current-time"></p>
 </div>
+
+<!-- Prawa sekcja -->
+<div class="right-section">
+    <div class="login-container">
+        <h2>Zaloguj się</h2>
+        <div class="alert" style="display: none;">Niepoprawny login lub hasło. Proszę spróbować ponownie.</div>
+        <form method="post" action="/login">
+            <input type="text" name="username" placeholder="Login">
+            <input type="password" name="password" placeholder="Hasło">
+            <button type="submit">Zaloguj się</button>
+        </form>
+        <p id="current-time" class="current-time"></p>
+    </div>
+</div>
+
 <script>
-    function updateTime() {
-        const now = new Date();
-        const hours = now.getHours().toString().padStart(2, '0');
-        const minutes = now.getMinutes().toString().padStart(2, '0');
-        const seconds = now.getSeconds().toString().padStart(2, '0');
-        document.getElementById('current-time').innerText = `Current Time: ${hours}:${minutes}:${seconds}`;
-    }
-    setInterval(updateTime, 1000);
-    updateTime();
-</script>
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            document.getElementById('current-time').innerText = `Aktualny czas: ${hours}:${minutes}:${seconds}`;
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+    </script>
 </body>
 </html>

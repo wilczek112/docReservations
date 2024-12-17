@@ -24,9 +24,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User saveUser(User user) throws Exception {
-        if (user.getPassword() != null) {
-            user.setPassword(passwordEncoder.encode(user.getPassword())); // Encrypt password before saving
-        }
         return userRepository.save(user);
     }
 
