@@ -1,0 +1,23 @@
+# Ignore Maven target directory
+target/
+
+# Ignore Git files
+.git
+.gitignore
+
+# Ignore IDE configurations
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Ignore environment variables
+.env
+
+# Ignore Docker files
+Dockerfile
+docker-compose.yml
+
+# Ignore logs and temporary files
+*.log
+*.tmp
