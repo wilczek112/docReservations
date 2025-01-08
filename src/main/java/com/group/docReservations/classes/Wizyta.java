@@ -3,6 +3,7 @@ package com.group.docReservations.classes;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -29,4 +30,7 @@ public class Wizyta {
     public void setEnd_time(LocalDateTime start_time, int durationMinutes) {
         this.end_time = start_time.plusMinutes(durationMinutes);
     }
+
+    @Transient
+    private Lekarz lekarz;
 }

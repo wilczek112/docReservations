@@ -16,4 +16,6 @@ public interface WizytaService {
 
     void deleteWizyta(String id);
 
+    List<Wizyta> findWizytyByUserId(String userId);
+
 }

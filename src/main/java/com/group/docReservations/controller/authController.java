@@ -48,30 +48,6 @@ public class authController {
     public String login() {
         return "redirect:/panel";
     }
-    @GetMapping("/panel")
-    public String panel(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentPrincipalName = authentication.getName();
-        User user = userService.findUserByEmail(currentPrincipalName)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found for email " + currentPrincipalName));
-
-        // Fetch and enrich doctors with user details
-        List<Lekarz> lekarze = lekarzService.findAllLekarze();
-        List<Map<String, String>> enrichedDoctors = lekarze.stream()
-                .map(lekarz -> {
-                    User doctorUser = userService.findUserById(lekarz.getUserId())
-                            .orElseThrow(() -> new ResourceNotFoundException("User not found for doctor with ID " + lekarz.getUserId()));
-                    return Map.of(
-                            "id", lekarz.getId(),
-                            "userFirstName", doctorUser.getFirstName(),
-                            "userLastName", doctorUser.getLastName()
-                    );
-                }).collect(Collectors.toList());
-
-        model.addAttribute("user", user);
-        model.addAttribute("doctors", enrichedDoctors);
-        return "panel";
-    }
 
     @GetMapping("/register")
     public String register(Model model) {
@@ -102,4 +78,5 @@ public class authController {
             return "redirect:/register?success";
         }
     }
+
 }

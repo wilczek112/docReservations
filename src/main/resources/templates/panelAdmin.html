@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pl" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Panel Główny</title>
+    <title>Panel Admin</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
@@ -141,32 +141,9 @@
     <div class="button-container">
         <button class="button" onclick="location.href='/users'">Użytkownicy</button>
         <button class="button" onclick="location.href='/lekarze'">Lekarze</button>
-        <button class="button" onclick="location.href='/panel/mojeWizyty'">Wizyty</button>
+        <button class="button" onclick="location.href='/wizyty'">Wizyty</button>
         <button class="button" onclick="location.href='/harmonogramy'">Harmonogramy</button>
         <button class="button" onclick="location.href='/logout'">Wyloguj się</button>
-    </div>
-
-    <div class="search-section">
-        <h3>Znajdź wolne terminy</h3>
-        <form id="search-form">
-            <div class="form-group">
-                <label for="doctor">Wybierz lekarza</label>
-                <select id="doctor" required>
-                    <option value="" disabled selected>Wybierz lekarza</option>
-                    <option th:each="doctor : ${doctors}" th:value="${doctor.id}"
-                            th:text="${doctor.userFirstName} + ' ' + ${doctor.userLastName}"></option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="date">Wybierz dzień</label>
-                <input type="date" id="date" required>
-            </div>
-            <button type="button" class="form-btn" onclick="searchSlots()">Szukaj</button>
-        </form>
-        <div id="results">
-            <h4>Wolne terminy:</h4>
-            <ul id="slots-list"></ul>
-        </div>
     </div>
 </div>
 

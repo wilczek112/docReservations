@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Moje Wizyty</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 2rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 1rem;
+            text-align: left;
+        }
+        th {
+            background-color: #00b894;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<h1>Moje Wizyty</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Data i Godzina Rozpoczęcia</th>
+        <th>Data i Godzina Zakończenia</th>
+        <th>Lekarz</th>
+        <th>Status</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="wizyta : ${wizyty}">
+        <td th:text="${wizyta.start_time}"></td>
+        <td th:text="${wizyta.end_time}"></td>
+        <td th:text="${wizyta.lekarz.user.firstName + ' ' + wizyta.lekarz.user.lastName}"></td>
+        <td th:text="${wizyta.status}"></td>
+    </tr>
+    </tbody>
+</table>
+<a href="/panel">Powrót do Panelu</a>
+</body>
+</html>

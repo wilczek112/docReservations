@@ -3,6 +3,7 @@ package com.group.docReservations.classes;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Getter
@@ -14,4 +15,7 @@ public class Lekarz {
 
     private String userId;
     private String specjalizacjaId;
+
+    @Transient
+    private User user;
 }
