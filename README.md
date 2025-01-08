@@ -16,7 +16,7 @@ Generated doctor: "doctor" + i  "Doctor-" + i  (starting with 1 example is docto
 
 Example of what should be in application.properties:
 
-mongo.url=database_link_with_authentication_data_ should_be_here
+spring.data.mongodb.uri=database_link_with_authentication_data_ should_be_here
 
 server=http://localhost:8080
 
